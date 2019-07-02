@@ -5,7 +5,6 @@ import datetime
 import numpy as np 
 import shutil as sh
 import netCDF4 as nc 
-#from units import mass_conversion, usefor
 
 def pdistf(x1,y1,x2,y2):
     return np.sqrt((x2-x1)**2 + (y2-y1)**2)
@@ -22,12 +21,29 @@ def find_last(var,ss):
             return lstInd + 1
         lstInd = ind
 
+def change_os(var):
+    osys = []
+    for ch in var:
+        if ':' in ch:
+            osys = 'windows'
+        if ch == '\\':
+            osys = 'windows'
+    if len(osys) == 0:
+        osys = 'linux'
+    if '/p/' in var and osys == 'linux':
+        return var.replace('/p/','p:\\').replace('/','\\')
+    elif osys == 'linux':
+        return var.replace('/','\\')
+    elif ':\\' in var and osys == 'windows':
+        return var.replace(':\\','/').replace('\\','/')
+
 
 def make_two(var):
     if len(str(var)) == 1:
         return '0' + str(var)
     else:
         return str(var)
+
 
 def make_four(var):
     if len(str(var)) != 4:
@@ -42,6 +58,7 @@ def make_four(var):
 
 def datetime_to_timestring(dt):
     return str(dt.year) + '-' + make_two(dt.month) + '-' + make_two(dt.day) + ' ' + make_two(dt.hour) + ':00:00'
+
 
 def read_pli(var):
     '''
@@ -84,14 +101,31 @@ def boundary_from_ext(var):
     boundaries = {}
     with open(var,'r') as nmf:
         page = nmf.readlines()
+        ext_type = 'old'
         for line,text in enumerate(page):
-            if 'QUANTITY=' in text:
-                name = page[line+1].replace('FILENAME=','').replace('.pli','').replace('\n','')
-                boundaries[name] = {}
-                boundaries[name]['type'] = text.replace('QUANTITY=','')
-                boundaries[name]['location'] = name + '.pli'
-                boundaries[name]['data'] = name + '.tim'
+            if '[boundary]' in text:
+                ext_type = 'new'
+        if ext_type == 'new':
+            for line,text in enumerate(page):
+                if '*' not in text:
+                    if '[boundary]' in text:
+                        name = page[line+2].replace('locationfile=','').replace('.pli','').replace('\n','')
+                        name = name[find_last(name,'/'):]
+                        boundaries[name] = {}
+                        boundaries[name]['type'] = page[line+1].replace('quantity=','').replace('\n','')
+                        boundaries[name]['pli_loc'] = change_os(page[line+2].replace('locationfile=','').replace('\n',''))
+                        boundaries[name]['data_loc'] = page[line+3].replace('forcingfile=','').replace('\n','')
+        else:
+            for line,text in enumerate(page):
+                if '*' not in text:
+                    if 'QUANTITY=' in text:
+                        name = page[line+1].replace('FILENAME=','').replace('.pli','').replace('\n','')
+                        boundaries[name] = {}
+                        boundaries[name]['type'] = text.replace('QUANTITY=','')
+                        boundaries[name]['location'] = name + '.pli'
+                        boundaries[name]['data'] = name + '.tim'
     return boundaries
+
 
 def write_bc_preamble(handle, pli_name, support, sub, depth, tref, unit):
     handle.write('[forcing]\n')
@@ -112,13 +146,15 @@ def write_bc_preamble(handle, pli_name, support, sub, depth, tref, unit):
         handle.write('Quantity                    = tracerbnd\n')
         handle.write('Unit                        = %s\n' % unit)
 
-def write_bcfile(sub, ds, depths, usefor, boundary_index, bnd, tref_model):
-    with open(r'test\%s.bc' % sub,'w') as bcfile:
+
+def write_bcfile(out_dir, sub, ds, time, usefor, boundaries, bnd, tref_model):
+    depths = ds.variables['depth'][:]
+    with open('%s%s.bc' % (out_dir, sub),'w') as bcfile:
         csub = usefor[sub]
-        arr = np.zeros((ds.variables['time'].shape[0], ds.variables['depth'].shape[0], len(boundary_index[bnd])))
-        for position in range(0, len(boundary_index[bnd])):
+        arr = np.zeros((ds.variables['time'].shape[0], ds.variables['depth'].shape[0], len(boundaries[bnd]['CMEMS_index'])))
+        for position in range(0, len(boundaries[bnd]['CMEMS_index'])):
             # time, depth, lat (Y), long(X)
-            arr[:,:,position] = ds.variables[csub['substance']][:,:,int(boundary_index[bnd][position,1]),int(boundary_index[bnd][position,0])]
+            arr[:,:,position] = ds.variables[csub['substance']][:,:,int(boundaries[bnd]['CMEMS_index'][position,1]),int(boundaries[bnd]['CMEMS_index'][position,0])]
             write_bc_preamble(bcfile, bnd, position, sub, ds.variables['depth'][:], tref_model, 'NA')
             valid = 0.0
             for tind, tt in enumerate(time):

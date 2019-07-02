@@ -15,3 +15,4 @@ usefor = {
         'Green': {'substance' : 'phyc', 'conversion' : 0.5 / 1000.0},
         'Diat' : {'substance' : 'phyc', 'conversion' : 0.5 / 1000.0}}
 
+ini = {}
