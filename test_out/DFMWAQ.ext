@@ -21,42 +21,22 @@ forcingfile=/p/1204257-dcsmzuno/2013-2017/WOA13/OB_all_orgsize_tem_20181202.bc
 return_time=0.0000000e+000
 
 [boundary]
-quantity=tracerbndOXY
-locationfile=OB_all_20181108OXY.pli
-forcingfile=OXY.bc
+quantity=salinitybnd
+locationfile=OB_all_20181108salinity.pli
+forcingfile=salinity.bc
 
 [boundary]
-quantity=tracerbndNO3
-locationfile=OB_all_20181108NO3.pli
-forcingfile=NO3.bc
+quantity=temperaturebnd
+locationfile=OB_all_20181108temperature.pli
+forcingfile=temperature.bc
 
 [boundary]
-quantity=tracerbndPO4
-locationfile=OB_all_20181108PO4.pli
-forcingfile=PO4.bc
+quantity=ux
+locationfile=OB_all_20181108ux.pli
+forcingfile=ux.bc
 
 [boundary]
-quantity=tracerbndPOC1
-locationfile=OB_all_20181108POC1.pli
-forcingfile=POC1.bc
-
-[boundary]
-quantity=tracerbndPON1
-locationfile=OB_all_20181108PON1.pli
-forcingfile=PON1.bc
-
-[boundary]
-quantity=tracerbndPOP1
-locationfile=OB_all_20181108POP1.pli
-forcingfile=POP1.bc
-
-[boundary]
-quantity=tracerbndDiat
-locationfile=OB_all_20181108Diat.pli
-forcingfile=Diat.bc
-
-[boundary]
-quantity=tracerbndGreen
-locationfile=OB_all_20181108Green.pli
-forcingfile=Green.bc
+quantity=uy
+locationfile=OB_all_20181108uy.pli
+forcingfile=uy.bc
 

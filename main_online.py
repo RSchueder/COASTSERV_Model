@@ -43,9 +43,14 @@ def main_online(grd, ext, data_list, subs, model_dir):
     count = []
     sub_data_list = []
     for sub in subs:
-        csub = usefor[sub] # csub is name of sub in CMEMS nomenclature
-        sub_data_list.append([file for file in data_list if csub['substance'] in file])
-        count.append(len(sub_data_list))
+        if sub in usefor.keys():
+            csub = usefor[sub] # csub is name of sub in CMEMS nomenclature
+            query = [file for file in data_list if csub['substance'] in file]
+            sub_data_list.append(query)
+            count.append(len(query))
+        else:
+            count.append(0)
+
     count = np.array(count)
     if sum(count) == 0:
         print('ERROR: cannot continue with boundary creation, no data files found for ANY variable')
@@ -58,7 +63,7 @@ def main_online(grd, ext, data_list, subs, model_dir):
                 print(ss)
     else:
         print('Data files found for all variables')
-
+    print(count)
     
     ind = count > 0
     for i, bol in enumerate(ind):

@@ -169,10 +169,10 @@ def write_bcfile(out_dir, sub, data_list, boundaries, bnd, tref_model):
 
             # get depths from first file rather than from every file
             # this is necessary to write preamble
-            ds = nc.Dataset(data_list[0])
+            ds = nc.Dataset(data_list[0], 'r')
             depths = ds.variables['depth'][:]
             times = ds.variables['time'][:]
-            print('substance: %s, data: ' % sub)
+            print('substance: %s' % sub)
             # for every position, go through all the data files and read data at the space index
             for position in range(0, len(boundaries[bnd]['CMEMS_index'])):
                 write_bc_preamble(bcfile, bnd, position, sub, ds.variables['depth'][:], tref_model)
@@ -180,7 +180,7 @@ def write_bcfile(out_dir, sub, data_list, boundaries, bnd, tref_model):
                 for file_index, data_file in enumerate(data_list):
                     arr = np.zeros((len(times), len(depths),1,1))
 
-                    ds = nc.Dataset(data_file)
+                    ds = nc.Dataset(data_file, 'r')
                     times = [datetime.datetime(1950,1,1,0,0,0) + datetime.timedelta(hours = int(tt)) for tt in ds.variables['time'][:]]
                     # read all times and depths for this file
                     # TIME, DEPTH, LAT, LONG

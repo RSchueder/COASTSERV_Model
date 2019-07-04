@@ -18,13 +18,13 @@ ext = r'd:\projects\DWAQ_CMEMS\test_in\A07_new.ext'
 
 # CMEMS FILE
 # TIME, DEPTH, LATITUDE, LONGITUDE
-data_list = glob.glob(r'd:\projects\DWAQ_CMEMS\CMEMS_download\*.nc')
-
+#data_list = glob.glob(r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc')
+data_list = glob.glob(r'd:\projects\CMEMS_DATA\*.nc')
 # SUBFILE
 # if DELWAQ, put path to substance file
 sub = r'p:\11201302-guayaquil\03_waterquality\03_baseCase\01_substances\guayas_V11.sub'
 # if DFM, use this list of parameters
-sub = ['salinity', 'temperature', 'ux', 'uy']
+#sub = ['salinity', 'temperature', 'ux', 'uy']
 
 # MODELDIR/OUTDIR
 model_dir = 'd:\\projects\\DWAQ_CMEMS\\test_out\\'
