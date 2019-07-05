@@ -9,11 +9,11 @@ usefor = {
         'NO3'        : {'substance' : 'no3'   , 'conversion' : 14.0 / 1000.0},
         'PO4'        : {'substance' : 'po4'   , 'conversion' : 30.97 / 1000.0},
         'Si'         : {'substance' : 'si'    , 'conversion' : 28.08 / 1000.0},
-        'PON1'       : {'substance' : 'phyc'  , 'conversion' : 0.1196 * 14 / (12 * 1000.0)},
-        'POP1'       : {'substance' : 'phyc'  , 'conversion' : 0.0085 * 30.97 / (12 * 1000.0)},
-        'POC1'       : {'substance' : 'phyc'  , 'conversion' : 1.0 / 1000.0},
-        'Green'      : {'substance' : 'phyc'  , 'conversion' : 0.5 / 1000.0},
-        'Diat'       : {'substance' : 'phyc'  , 'conversion' : 0.5 / 1000.0},
+        'PON1'       : {'substance' : 'chla'  , 'conversion' : 0.02 * 0.1196 * 14 / (12 * 1000.0)},
+        'POP1'       : {'substance' : 'chla'  , 'conversion' : 0.02 * 0.0085 * 30.97 / (12 * 1000.0)},
+        'POC1'       : {'substance' : 'chla'  , 'conversion' : 0.02 * 1.0 / 1000.0},
+        'Green'      : {'substance' : 'chla'  , 'conversion' : 0.02 * 0.5 / 1000.0},
+        'Diat'       : {'substance' : 'chla'  , 'conversion' : 0.02 * 0.5 / 1000.0},
         'salinity'   : {'substance' : 'so'    , 'conversion' : 1.0},
         'temperature': {'substance' : 'thetao', 'conversion' : 1.0},
         'ux'         : {'substance' : 'uo'    , 'conversion' : 1.0},
@@ -26,4 +26,5 @@ constituent_boundary_type = {
         'ux'         : {'type' : 'ux'              , 'unit' : 'm/s'},
         'uy'         : {'type' : 'uy'              , 'unit' : 'm/s'}       
 } 
+
 ini = {}

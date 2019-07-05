@@ -20,9 +20,9 @@ import numpy as np
 import shutil as sh
 import netCDF4 as nc 
 from units import *
-from DWAQ_CMEMS_functions import *
+from modules import *
 
-def main_online(grd, ext, data_list, subs, model_dir):
+def main_boundary(grid, ext, data_list, subs, model_dir):
     ###############################################################################
     # MAIN
     ###############################################################################
@@ -83,7 +83,6 @@ def main_online(grd, ext, data_list, subs, model_dir):
             ind += 1
 
     tref_model = datetime.datetime(2000,1,1,0,0,0)
-    depths  = ds.variables['depth'][:]
 
     ###############################################################################
     # FIND LAT/LONG INDEX PAIR FOR EACH SUPPORT POINT IN EACH PLI
@@ -91,7 +90,15 @@ def main_online(grd, ext, data_list, subs, model_dir):
 
     for bnd in boundaries.keys():
         if boundaries[bnd]['type'] == 'waterlevelbnd':
-            pli = read_pli(boundaries[bnd]['pli_loc'])
+            pli_loc = 'absolute'
+            try:
+                pli = read_pli(boundaries[bnd]['pli_loc'])
+            except(FileNotFoundError):
+                pli_loc = 'local'
+                # could be local, so look in same folder as ext
+                pli_dir = ext[:find_last(ext,'\\')-1]
+                pli = read_pli(pli_dir + '\\' + boundaries[bnd]['pli_loc'])
+
             boundaries[bnd]['CMEMS_index'] = np.zeros((len(pli),2))
             # obtain indicies on CMEMS grid for all support points for all BND
             for ind, ii in enumerate(pli):
@@ -129,18 +136,28 @@ def main_online(grd, ext, data_list, subs, model_dir):
                     # create a pli for every substance based on this existing pli
                     with open(model_dir + '%s%s.pli' % (bnd,sub) ,'w') as pli:
                         # copy the existing pli but put the substance in the name
-                        try:
+                        if pli_loc == 'absolute':
                             with open(boundaries[bnd]['pli_loc'],'r') as bndFile:
                                 lines = bndFile.readlines()
                                 for line in lines:
-                                    pli.write(line.replace(bnd, bnd + sub))    
-                        except(FileNotFoundError):
-                            print('File not found, incorrect path parsed when reading *.ext')
-                            print('attempt was at %s' % boundaries[bnd]['pli_loc'])
+                                    pli.write(line.replace(bnd, bnd + sub))  
+                        else:
+                            #try:
+                            with open(pli_dir + '\\' + boundaries[bnd]['pli_loc'], 'r') as bndFile:
+                                lines = bndFile.readlines()
+                                for line in lines:
+                                    pli.write(line.replace(bnd, bnd + sub))     
+
+                            #except(FileNotFoundError):
+                            #    print('File not found, incorrect path parsed when reading *.ext')
+                            #    print('attempt was at %s' % boundaries[bnd]['pli_loc'])
                         
                     # copy the original boundary pli as well for the hydrodynamic model
-                    sh.copyfile(boundaries[bnd]['pli_loc'],model_dir + boundaries[bnd]['pli_loc'][find_last(boundaries[bnd]['pli_loc'],'\\'):])
-            
+                    try:
+                        sh.copyfile(boundaries[bnd]['pli_loc'], model_dir + boundaries[bnd]['pli_loc'][find_last(boundaries[bnd]['pli_loc'],'\\'):])
+                    except(FileNotFoundError):
+                        sh.copyfile(pli_dir + '\\' + boundaries[bnd]['pli_loc'], model_dir + boundaries[bnd]['pli_loc'])
+
     ###############################################################################
     # WRITE NEW EXT FILE CONTAINING THE CONSTITUENT BOUNDARIES
     ###############################################################################
@@ -160,7 +177,6 @@ def main_online(grd, ext, data_list, subs, model_dir):
                                 new_ext.write('quantity=%s\n' % constituent_boundary_type[sub]['type'])
                             else:
                                 new_ext.write('quantity=tracerbnd%s\n' % sub)
-
                                 
                             new_ext.write('locationfile=%s%s.pli\n' % (bnd,sub))
                             new_ext.write('forcingfile=%s.bc\n' % sub)
@@ -169,6 +185,7 @@ def main_online(grd, ext, data_list, subs, model_dir):
         if isinstance(subs, str):
             # initials go in old style file
             # make sure the domain pol exists first!
+            grd = nc.Dataset(grid)
             x_min = np.min(grd.variables['mesh2d_node_x'][:])
             x_max = np.max(grd.variables['mesh2d_node_x'][:])
             y_min = np.min(grd.variables['mesh2d_node_y'][:])

@@ -110,7 +110,8 @@ def boundary_from_ext(var):
                 if '*' not in text:
                     if '[boundary]' in text:
                         name = page[line+2].replace('locationfile=','').replace('.pli','').replace('\n','')
-                        name = name[find_last(name,'/'):]
+                        if '/' in name:    
+                            name = name[find_last(name,'/'):]
                         boundaries[name] = {}
                         boundaries[name]['type'] = page[line+1].replace('quantity=','').replace('\n','')
                         boundaries[name]['pli_loc'] = change_os(page[line+2].replace('locationfile=','').replace('\n',''))
@@ -151,7 +152,7 @@ def read_nc_data(data_list, boundaries, bnd, csub):
     fill = ds.variables[csub['substance']]._FillValue 
 
     for file_index, data_file in enumerate(data_list):
-        print('reading data file ' + data_file[find_last(data_file,'\\')])
+        print('reading data file ' + data_file[find_last(data_file,'\\'):])
         ds = nc.Dataset(data_file, 'r')
         times = np.array([datetime.datetime(1950,1,1,0,0,0) + datetime.timedelta(hours = int(tt)) for tt in ds.variables['time'][:]])
         for position in range(0, len(boundaries[bnd]['CMEMS_index'])):
@@ -168,7 +169,7 @@ def read_nc_data(data_list, boundaries, bnd, csub):
             data[t_index:t_index+len(times), :, position] = arr
 
             et = datetime.datetime.now()
-            print('position ' + str(position) + ' read took ' + str((et - st).seconds) + ' seconds on time block ' + str(file_index + 1) + '/' + str(len(data_list)+1))
+            print(csub['substance'] + ' position ' + str(position) + ' read took ' + str((et - st).seconds) + ' seconds on time block ' + str(file_index + 1) + '/' + str(len(data_list)))
 
     return meta['times'], depths, data, fill
 
@@ -208,7 +209,7 @@ def write_bcfile(out_dir, sub, data_list, boundaries, bnd, tref_model):
 
     if len(data_list) == 0:
         print('ERROR: cannot continue with boundary creation, no data files found for this variable')
-        print('variable = %s (%s)' % (sub, csub['substance']))
+        print('variable = %s (called %s in CMEMS) skipped' % (sub, csub['substance']))
 
     else:
         with open('%s%s.bc' % (out_dir, sub),'w') as bcfile:

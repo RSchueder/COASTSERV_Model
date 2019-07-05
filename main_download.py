@@ -7,12 +7,16 @@ import os
 import pandas as pd
 import numpy as np 
 
-def config_download(time_vect, dataset, coords, user, pwd):
+def main_download(time_vect, dataset, coords, user, pwd):
 
     '''
     writes the bat and sh files required to download the requested parameters from CMEMS
     only linux has capabilities to retry the download if it failed
     '''
+
+    ###############################################################################
+    # MAIN
+    ###############################################################################
 
     # quarter of a year is a good size based on trial and error
     max_time = np.ceil(365/4)
@@ -27,7 +31,7 @@ def config_download(time_vect, dataset, coords, user, pwd):
                 'bio'      : ['GLOBAL_REANALYSIS_BIO_001_029-TDS', 'global-reanalysis-bio-001-029-daily']}
 
     all_subs = {'physchem' : ['thetao', 'bottomT' , 'so', 'zos', 'uo', 'vo'],
-                'bio'      : ['phyc', 'o2','no3','po4','si']}
+                'bio'      : ['chl', 'o2','no3','po4','si']}
 
     subs = all_subs[dataset]
 
@@ -50,7 +54,10 @@ def config_download(time_vect, dataset, coords, user, pwd):
 
     if not os.path.exists('CMEMS_download\\' + args['out-dir'].replace('"','') + '\\'):
         os.mkdir('CMEMS_download\\' + args['out-dir'].replace('"','') + '\\')
-
+    
+    ###############################################################################
+    # WINDOWS
+    ###############################################################################
     with open(os.getcwd() +'\\CMEMS_download\\CMEMS_download_%s.bat' % dataset,'w') as bat:
         for sub in subs:
             for tt in range(0, int(num_time_intervals)):
@@ -68,9 +75,11 @@ def config_download(time_vect, dataset, coords, user, pwd):
                             bat.write('--%s %s ' % (arg, args[arg]))
                 bat.write('\n timeout 10 \n')
         bat.write('\n pause')
-
+    ###############################################################################
+    # LINUX
+    ###############################################################################
     with open(os.getcwd() + '\\CMEMS_download\\CMEMS_download_%s.sh' % dataset,'w') as shell:
-        shell.write('#!/bin/bash \n')
+        shell.write('#!/bin/bash\n')
         for sub in subs:
             for tt in range(0, int(num_time_intervals)):
                 shell.write('python -m motu-client ')
@@ -90,12 +99,12 @@ def config_download(time_vect, dataset, coords, user, pwd):
                 
                 # test for success of download
                 shell.write('\n')
-                shell.write('if [ ! -f "%s" ]; then \n' % out_name)
+                shell.write('if [ ! -f "%s" ]; then\n' % out_name)
                 shell.write('   while (( ! -f "%s" ))\n' % out_name)
                 shell.write('   do\n')
-                shell.write('       echo "ERROR: download failed on server end, retrying..." \n')
-                shell.write('       echo "giving the server a break..." \n')
-                shell.write('       sleep 10s \n')
+                shell.write('       echo "ERROR: download failed on server end, retrying..."\n')
+                shell.write('       echo "giving the server a break..."\n')
+                shell.write('       sleep 10s\n')
                 shell.write('       python -m motuclient ')
                 for arg in args.keys():
                         if arg == 'variable':
@@ -108,7 +117,7 @@ def config_download(time_vect, dataset, coords, user, pwd):
                             shell.write('--out-name ' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc ')
                         else:
                             shell.write('--%s %s ' % (arg, args[arg]))
-                shell.write('   done \n')
-                shell.write('fi \n')                
+                shell.write('   done\n')
+                shell.write('fi\n')                
         shell.write('\n pause')
 
