@@ -3,9 +3,11 @@ Tools for nesting coastal DFM and DFMWAQ models in CMEMS MERCATOR global physioc
 
 # Usage
 First the data needs to be downloaded:
-* change settings as needed in CMEMS_download_ini.py 
+* Change settings as needed in init_data.py. This will create a shell script and a batch file for downloading the data files from the CMEMS server 
+* run the script to download the data
 
-Then the boundary conditions can be created
-* change settings as needed in DFM_boundary_ini.py 
+After the data has been downloaded, the boundary conditions can be created
+* Change settings as needed in init_boundary.py 
+* needed are a nc grid file, an ext file, a sub file if a water quality model is being created, and an out directory
 
-Then you can execute run_processing.bat
+Then you can execute init_data.py followed by init_boundary.py after the download has completed. an example is provided in run example.
