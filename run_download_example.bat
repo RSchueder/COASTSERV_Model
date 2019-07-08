@@ -1,5 +1,7 @@
 python init_download.py
-rem call CMEMS_download\CMEMS_download_physchem.bat
-rem python init_boundary.py
+cd CMEMS_download
+call CMEMS_download_physchem.bat
+cd ../
+
 
 pause

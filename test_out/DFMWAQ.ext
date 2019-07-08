@@ -68,12 +68,7 @@ locationfile=sea_boundarytemperature.pli
 forcingfile=temperature.bc
 
 [boundary]
-quantity=ux
-locationfile=sea_boundaryux.pli
-forcingfile=ux.bc
-
-[boundary]
-quantity=uy
-locationfile=sea_boundaryuy.pli
-forcingfile=uy.bc
+quantity=uxuy
+locationfile=sea_boundaryuxuy.pli
+forcingfile=uxuy.bc
 

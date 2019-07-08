@@ -22,7 +22,7 @@ import netCDF4 as nc
 from units import *
 from modules import *
 
-def main_boundary(grid, ext, data_list, subs, model_dir):
+def main_boundary(grid, ext, data_list, subs, tref_model, model_dir):
     ###############################################################################
     # MAIN
     ###############################################################################
@@ -45,7 +45,7 @@ def main_boundary(grid, ext, data_list, subs, model_dir):
     for sub in subs:
         if sub in usefor.keys():
             csub = usefor[sub] # csub is name of sub in CMEMS nomenclature
-            query = [file for file in data_list if csub['substance'] in file]
+            query = [file for file in data_list if csub['substance'][0] in file]
             sub_data_list.append(query)
             count.append(len(query))
         else:
@@ -63,6 +63,7 @@ def main_boundary(grid, ext, data_list, subs, model_dir):
                 print(ss)
     else:
         print('Data files found for all variables')
+    print(subs)
     print(count)
     
     ind = count > 0
@@ -82,7 +83,6 @@ def main_boundary(grid, ext, data_list, subs, model_dir):
             CM[ind,1] = jj
             ind += 1
 
-    tref_model = datetime.datetime(2000,1,1,0,0,0)
 
     ###############################################################################
     # FIND LAT/LONG INDEX PAIR FOR EACH SUPPORT POINT IN EACH PLI
@@ -174,7 +174,7 @@ def main_boundary(grid, ext, data_list, subs, model_dir):
                         if sub in usefor.keys():
                             new_ext.write('[boundary]\n')
                             if sub in constituent_boundary_type.keys():
-                                new_ext.write('quantity=%s\n' % constituent_boundary_type[sub]['type'])
+                                new_ext.write('quantity=%s\n' % ','.join(constituent_boundary_type[sub]['type']).replace(',',''))
                             else:
                                 new_ext.write('quantity=tracerbnd%s\n' % sub)
                                 

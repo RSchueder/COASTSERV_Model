@@ -135,12 +135,14 @@ def read_nc_data(data_list, boundaries, bnd, csub):
     The stratey tries to reduce the number of total times nc file handles are switched
     '''
     times = np.array([])
-    for file_index, data_file in enumerate(data_list):
+    for file_index, data_file in enumerate(data_list[0]):
+        # it is assumed all variables in csub to make a model sub have the same file sizes
         ds = nc.Dataset(data_file, 'r')
         if file_index == 0:
             depths = ds.variables['depth'][:]
         file_time = ds.variables['time'][:]
         times = np.concatenate((times, file_time))
+    fill = ds.variables[csub['substance'][0]]._FillValue 
 
     times = np.array(times)
     # not sure what order the times will be in, so we sort them
@@ -148,28 +150,30 @@ def read_nc_data(data_list, boundaries, bnd, csub):
     # 1950 01 01 is the reference time for CMEMS
     times = np.array([datetime.datetime(1950,1,1,0,0,0) + datetime.timedelta(hours = int(tt)) for tt in times])
     meta = {'depths' : depths, 'times': times}
-    data = np.zeros((len(meta['times']), len(meta['depths']), len(boundaries[bnd]['CMEMS_index'])))
-    fill = ds.variables[csub['substance']]._FillValue 
+    data = {}
+    for part_sub in csub['substance']:
+        data[part_sub] = np.zeros((len(meta['times']), len(meta['depths']), len(boundaries[bnd]['CMEMS_index'])))
 
-    for file_index, data_file in enumerate(data_list):
-        print('reading data file ' + data_file[find_last(data_file,'\\'):])
-        ds = nc.Dataset(data_file, 'r')
-        times = np.array([datetime.datetime(1950,1,1,0,0,0) + datetime.timedelta(hours = int(tt)) for tt in ds.variables['time'][:]])
-        for position in range(0, len(boundaries[bnd]['CMEMS_index'])):
-            st = datetime.datetime.now()
+    for part_sub_i, part_sub in enumerate(csub['substance']):
+        for file_index, data_file in enumerate(data_list[part_sub_i]):
+            print('reading data file ' + data_file[find_last(data_file,'\\'):])
+            ds = nc.Dataset(data_file, 'r')
+            times = np.array([datetime.datetime(1950,1,1,0,0,0) + datetime.timedelta(hours = int(tt)) for tt in ds.variables['time'][:]])
+            for position in range(0, len(boundaries[bnd]['CMEMS_index'])):
+                st = datetime.datetime.now()
 
-            # find index in times array that this subsection of time best matches and insert data in that slice later
-            t_index = np.argmin(abs(meta['times'] - times[0]))
-            # read all times and depths for this file
-            # TIME, DEPTH, LAT, LONG
-            arr = ds.variables[csub['substance']][:,:, int(boundaries[bnd]['CMEMS_index'][position,1]), int(boundaries[bnd]['CMEMS_index'][position,0])]
-            arr = arr.squeeze()
-            arr.mask = False       
+                # find index in times array that this subsection of time best matches and insert data in that slice later
+                t_index = np.argmin(abs(meta['times'] - times[0]))
+                # read all times and depths for this file
+                # TIME, DEPTH, LAT, LONG
+                arr = ds.variables[part_sub][:,:, int(boundaries[bnd]['CMEMS_index'][position,1]), int(boundaries[bnd]['CMEMS_index'][position,0])]
+                arr = arr.squeeze()
+                arr.mask = False       
 
-            data[t_index:t_index+len(times), :, position] = arr
+                data[part_sub][t_index:t_index+len(times), :, position] = arr
 
-            et = datetime.datetime.now()
-            print(csub['substance'] + ' position ' + str(position) + ' read took ' + str((et - st).seconds) + ' seconds on time block ' + str(file_index + 1) + '/' + str(len(data_list)))
+                et = datetime.datetime.now()
+                print(part_sub + ' position ' + str(position) + ' read took ' + str((et - st).seconds) + ' seconds on time block ' + str(file_index + 1) + '/' + str(len(data_list[part_sub_i])))
 
     return meta['times'], depths, data, fill
 
@@ -179,7 +183,7 @@ def write_bc_preamble(handle, pli_name, support, sub, depth, tref):
     write the header information for a bc file
     '''
     handle.write('[forcing]\n')
-    handle.write('Name                            = %s_%s\n' % (pli_name.replace('.pli',''), make_len(support, 4)))
+    handle.write('Name                            = %s%s_%s\n' % (pli_name.replace('.pli',''), sub, make_len(support+1, 4)))
     handle.write('Function                        = t3D\n')
     handle.write('Time-interpolation              = linear\n')
     handle.write('Vertical position type          = zdatum\n')
@@ -189,15 +193,19 @@ def write_bc_preamble(handle, pli_name, support, sub, depth, tref):
     handle.write('\n')
     handle.write('Quantity                        = time\n')
     handle.write('Unit                            = MINUTES since %s\n' % datetime_to_timestring(tref))
-    
+
+    if sub == 'uxuy':
+        handle.write('Vector = uxuyadvectionvelocitybnd:ux,uy\n')
+
     for dep in range(0, len(depth)):
-        if sub in constituent_boundary_type.keys():
-            handle.write('Quantity                        = %s\n' % constituent_boundary_type[sub]['type'])
-            handle.write('Unit                            = %s\n' % constituent_boundary_type[sub]['unit'])
-        else:
-            handle.write('Quantity                        = tracerbnd\n')
-            handle.write('Unit                            = g/m3\n')
-        handle.write(    'Vertical position               = %s\n' % str(dep + 1))
+        for part_sub_i, part_sub in enumerate(constituent_boundary_type[sub]['type']):
+            if sub in constituent_boundary_type.keys():
+                handle.write('Quantity                        = %s\n' % constituent_boundary_type[sub]['type'][part_sub_i])
+                handle.write('Unit                            = %s\n' % constituent_boundary_type[sub]['unit'])
+            else:
+                handle.write('Quantity                        = tracerbnd\n')
+                handle.write('Unit                            = g/m3\n')
+            handle.write(    'Vertical position               = %s\n' % str(dep + 1))
         
 
 def write_bcfile(out_dir, sub, data_list, boundaries, bnd, tref_model):
@@ -205,7 +213,10 @@ def write_bcfile(out_dir, sub, data_list, boundaries, bnd, tref_model):
     write the bc file, calling preamble function and writing values at all depths for all times
     '''
     csub = usefor[sub] # csub is name of sub in CMEMS nomenclature
-    data_list = [file for file in data_list if csub['substance'] in file]
+    full_data_list = data_list
+    data_list = []
+    for part_sub in csub['substance']:
+        data_list.append([file for file in full_data_list if part_sub in file])
 
     if len(data_list) == 0:
         print('ERROR: cannot continue with boundary creation, no data files found for this variable')
@@ -230,13 +241,14 @@ def write_bcfile(out_dir, sub, data_list, boundaries, bnd, tref_model):
                     bcfile.write('  ')
                     valid = 0.0
                     for dind, depth in enumerate(depths):
-                        val = data[tind, dind, position]
-                        if val == fill or np.isnan(val):
-                            val = valid
-                        else:
-                            valid = val
-                        bcfile.write('%.4e' % (val * csub['conversion']))
-                        bcfile.write('  ')
+                        for part_sub in csub['substance']:
+                            val = data[part_sub][tind, dind, position]
+                            if val == fill or np.isnan(val):
+                                val = valid
+                            else:
+                                valid = val
+                            bcfile.write('%.4e' % (val * csub['conversion']))
+                            bcfile.write('  ')
                     bcfile.write('\n')
             print('finished writing %s boundary for position %i/%i in boundary %s' % (sub, position+1, len(boundaries[bnd]['CMEMS_index']), bnd))
             gc.collect()

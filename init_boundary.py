@@ -17,16 +17,19 @@ ext = r'd:\projects\DWAQ_CMEMS\test_in\Guayaquil\sea_riv_boundary_local_bc.ext'
 
 # CMEMS FILE
 # TIME, DEPTH, LATITUDE, LONGITUDE
-data_list = glob.glob(r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc')
-#data_list = glob.glob(r'd:\projects\CMEMS_DATA\*.nc')
+#data_list = glob.glob(r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc')
+data_list = glob.glob(r'd:\projects\CMEMS_DATA\*.nc')
 
 # SUBFILE
 # if DELWAQ, put path to substance file
 #sub = r'p:\11201302-guayaquil\03_waterquality\03_baseCase\01_substances\guayas_V11.sub'
+
 # if DFM, use this list of parameters
-sub = ['salinity', 'temperature', 'ux', 'uy']
+sub = ['salinity', 'temperature', 'uxuy']
 
 # MODELDIR/OUTDIR
+tref_model = datetime.datetime(2000,1,1,0,0,0)
+
 model_dir = 'd:\\projects\\DWAQ_CMEMS\\test_out\\'
 
-main_boundary(grid, ext, data_list, sub, model_dir)
+main_boundary(grid, ext, data_list, sub, tref_model, model_dir)
