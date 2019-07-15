@@ -97,6 +97,13 @@ def read_sub_file(file):
 def boundary_from_ext(var):
     '''
     extracts the boundary name and type from a boundary definition .ext file
+
+    Jul 10 note to self for update on July 11
+    this is intentionally different from the more generic version available in dflowutil
+    this is because dflowutil will return a salinity and temperature and water level boundary
+    that already exist, whereas this tool will make those based solely on a single pli, assuming
+    there are not already other consituents specified at the same pli. If there is, and wl is not
+    the last constituent specified for a given non-unique pli, the tool will not work.
     '''
     boundaries = {}
     with open(var,'r') as nmf:
