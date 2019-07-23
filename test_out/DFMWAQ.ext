@@ -1,37 +1,45 @@
 [boundary]
 quantity=waterlevelbnd
-locationfile=/p/11202221-0004-dcsm-fm/models/model_input/bnd_cond/wl/FES2012/20181108/OB_all_20181108.pli
-forcingfile=OB_all_20181108_waterlevelbnd_noSa_noMKS2.bc
+locationfile=sea_boundary.pli
+forcingfile=seawaterlevel.bc
 
 [boundary]
-quantity=waterlevelbnd
-locationfile=/p/11202221-0004-dcsm-fm/models/model_input/bnd_cond/wl/FES2012/20181108/OB_all_20181108.pli
-forcingfile=steric_correction_WOA13_itdate20111222_SHanomaly_100m_meanSH_1500m_A0_min30cm_20190703.bc
+quantity=tracerbndOXY
+locationfile=sea_boundaryOXY.pli
+forcingfile=OXY.bc
 
 [boundary]
-quantity=salinitybnd
-locationfile=/p/1204257-dcsmzuno/2013-2017/WOA13/OB_all_orgsize_20181107.pli
-forcingfile=/p/1204257-dcsmzuno/2013-2017/WOA13/OB_all_orgsize_sal_20181202.bc
-return_time=0.0000000e+000
+quantity=tracerbndNO3
+locationfile=sea_boundaryNO3.pli
+forcingfile=NO3.bc
 
 [boundary]
-quantity=temperaturebnd
-locationfile=/p/1204257-dcsmzuno/2013-2017/WOA13/OB_all_orgsize_20181107.pli
-forcingfile=/p/1204257-dcsmzuno/2013-2017/WOA13/OB_all_orgsize_tem_20181202.bc
-return_time=0.0000000e+000
+quantity=tracerbndPO4
+locationfile=sea_boundaryPO4.pli
+forcingfile=PO4.bc
 
 [boundary]
-quantity=salinitybnd
-locationfile=OB_all_20181108salinity.pli
-forcingfile=salinity.bc
+quantity=tracerbndPOC1
+locationfile=sea_boundaryPOC1.pli
+forcingfile=POC1.bc
 
 [boundary]
-quantity=temperaturebnd
-locationfile=OB_all_20181108temperature.pli
-forcingfile=temperature.bc
+quantity=tracerbndPON1
+locationfile=sea_boundaryPON1.pli
+forcingfile=PON1.bc
 
 [boundary]
-quantity=uxuy
-locationfile=OB_all_20181108uxuy.pli
-forcingfile=uxuy.bc
+quantity=tracerbndPOP1
+locationfile=sea_boundaryPOP1.pli
+forcingfile=POP1.bc
+
+[boundary]
+quantity=tracerbndDiat
+locationfile=sea_boundaryDiat.pli
+forcingfile=Diat.bc
+
+[boundary]
+quantity=tracerbndGreen
+locationfile=sea_boundaryGreen.pli
+forcingfile=Green.bc
 

@@ -6,7 +6,6 @@ functions for facilitation boundary condition file creation
 
 import os
 import gc
-import d3d
 import glob
 import datetime
 import numpy as np 
@@ -98,20 +97,24 @@ def boundary_from_ext(var):
     '''
     extracts the boundary name and type from a boundary definition .ext file
 
-    Jul 10 note to self for update on July 11
+    Jul 10 note to self for update 
     this is intentionally different from the more generic version available in dflowutil
     this is because dflowutil will return a salinity and temperature and water level boundary
     that already exist, whereas this tool will make those based solely on a single pli, assuming
     there are not already other consituents specified at the same pli. If there is, and wl is not
     the last constituent specified for a given non-unique pli, the tool will not work.
+
+    This is a valid assumption because this tool is designed to work on models for which only waterlevel
+    boundaries have been defined.
     '''
     boundaries = {}
-    with open(var,'r') as nmf:
+    with open(var,'r') as nmf: # nmf = new_model_file
         page = nmf.readlines()
-        ext_type = 'old'
+        ext_type = 'old' # first assume ext type is old, then check
         for line,text in enumerate(page):
             if '[boundary]' in text:
                 ext_type = 'new'
+        # parse
         if ext_type == 'new':
             for line,text in enumerate(page):
                 if '*' not in text:
@@ -132,6 +135,7 @@ def boundary_from_ext(var):
                         boundaries[name]['type'] = text.replace('QUANTITY=','')
                         boundaries[name]['location'] = name + '.pli'
                         boundaries[name]['data'] = name + '.tim'
+
     return boundaries
 
 
@@ -140,13 +144,22 @@ def read_nc_data(data_list, boundaries, bnd, csub):
     reads each file one by one, storing the data per position in a tensor
     this will be returned so it can be writen to a file
     The stratey tries to reduce the number of total times nc file handles are switched
+    the alternative strategy was to do the writing point by point, meaning each nc file would be 
+    read as many times as there are support points. Now they are only read once each, with the
+    data being stored for later use.
     '''
     times = np.array([])
+
+    # first get all times and the depth, where the associated data will be filled incrementally
     for file_index, data_file in enumerate(data_list[0]):
         # it is assumed all variables in csub to make a model sub have the same file sizes
         ds = nc.Dataset(data_file, 'r')
         if file_index == 0:
-            depths = ds.variables['depth'][:]
+            try:
+                depths = ds.variables['depth'][:]
+            except:
+                # 2D file
+                depths = [0]
         file_time = ds.variables['time'][:]
         times = np.concatenate((times, file_time))
     fill = ds.variables[csub['substance'][0]]._FillValue 
@@ -158,8 +171,12 @@ def read_nc_data(data_list, boundaries, bnd, csub):
     times = np.array([datetime.datetime(1950,1,1,0,0,0) + datetime.timedelta(hours = int(tt)) for tt in times])
     meta = {'depths' : depths, 'times': times}
     data = {}
+    # allocate array
     for part_sub in csub['substance']:
-        data[part_sub] = np.zeros((len(meta['times']), len(meta['depths']), len(boundaries[bnd]['CMEMS_index'])))
+        if len(meta['depths']) > 1:
+            data[part_sub] = np.zeros((len(meta['times']), len(meta['depths']), len(boundaries[bnd]['CMEMS_index'])))
+        else:
+            data[part_sub] = np.zeros((len(meta['times']), len(boundaries[bnd]['CMEMS_index'])))
 
     for part_sub_i, part_sub in enumerate(csub['substance']):
         for file_index, data_file in enumerate(data_list[part_sub_i]):
@@ -173,12 +190,18 @@ def read_nc_data(data_list, boundaries, bnd, csub):
                 t_index = np.argmin(abs(meta['times'] - times[0]))
                 # read all times and depths for this file
                 # TIME, DEPTH, LAT, LONG
-                arr = ds.variables[part_sub][:,:, int(boundaries[bnd]['CMEMS_index'][position,1]), int(boundaries[bnd]['CMEMS_index'][position,0])]
-                arr = arr.squeeze()
-                arr.mask = False       
-
-                data[part_sub][t_index:t_index+len(times), :, position] = arr
-
+                if len(meta['depths']) > 1:
+                    arr = ds.variables[part_sub][:, :, int(boundaries[bnd]['CMEMS_index'][position,1]), int(boundaries[bnd]['CMEMS_index'][position,0])]
+                    arr = arr.squeeze()
+                    arr.mask = False
+                    data[part_sub][t_index:t_index+len(times), :, position] = arr
+                else:
+                    # steric
+                    arr = ds.variables[part_sub][:, int(boundaries[bnd]['CMEMS_index'][position,1]), int(boundaries[bnd]['CMEMS_index'][position,0])]
+                    arr = arr.squeeze()
+                    arr.mask = False
+                    data[part_sub][t_index:t_index+len(times), position] = arr
+                   
                 et = datetime.datetime.now()
                 print(part_sub + ' position ' + str(position) + ' read took ' + str((et - st).seconds) + ' seconds on time block ' + str(file_index + 1) + '/' + str(len(data_list[part_sub_i])))
 
@@ -193,22 +216,26 @@ def write_bc_preamble(handle, pli_name, support, sub, depth, tref):
     handle.write('Name                            = %s%s_%s\n' % (pli_name.replace('.pli',''), sub, make_len(support+1, 4)))
     handle.write('Function                        = t3D\n')
     handle.write('Time-interpolation              = linear\n')
-    handle.write('Vertical position type          = zdatum\n')
-    handle.write('Vertical position specification = ')
-    for dep in depth:
-        handle.write('-%.2f  ' % dep)
-    handle.write('\n')
+    if sub != 'steric':
+        handle.write('Vertical position type          = zdatum\n')
+        handle.write('Vertical position specification = ')
+        for dep in depth:
+            handle.write('-%.2f  ' % dep)
+        handle.write('\n')
+
     handle.write('Quantity                        = time\n')
     handle.write('Unit                            = MINUTES since %s\n' % datetime_to_timestring(tref))
 
     if sub == 'uxuy':
         handle.write('Vector = uxuyadvectionvelocitybnd:ux,uy\n')
 
-    for dep in range(0, len(depth)):
-        for part_sub_i, part_sub in enumerate(constituent_boundary_type[sub]['type']):
+    if sub != 'steric':
+        for dep in range(0, len(depth)):
             if sub in constituent_boundary_type.keys():
-                handle.write('Quantity                        = %s\n' % constituent_boundary_type[sub]['type'][part_sub_i])
-                handle.write('Unit                            = %s\n' % constituent_boundary_type[sub]['unit'])
+
+                for part_sub_i, part_sub in enumerate(constituent_boundary_type[sub]['type']):
+                    handle.write('Quantity                        = %s\n' % constituent_boundary_type[sub]['type'][part_sub_i])
+                    handle.write('Unit                            = %s\n' % constituent_boundary_type[sub]['unit'])
             else:
                 handle.write('Quantity                        = tracerbnd\n')
                 handle.write('Unit                            = g/m3\n')
@@ -235,8 +262,10 @@ def write_bcfile(out_dir, sub, data_list, boundaries, bnd, tref_model):
             # get depths from first file rather than from every file
             # this is necessary to write preamble
             print('substance: %s' % sub)
-
+            print('reading data...')
             times, depths, data, fill = read_nc_data(data_list, boundaries, bnd, csub)
+            print('finished reading data')
+            print('writing file...')
 
             # for every position, go through all the data files and read data at the space index
             for position in range(0, len(boundaries[bnd]['CMEMS_index'])):
@@ -249,7 +278,12 @@ def write_bcfile(out_dir, sub, data_list, boundaries, bnd, tref_model):
                     valid = 0.0
                     for dind, depth in enumerate(depths):
                         for part_sub in csub['substance']:
-                            val = data[part_sub][tind, dind, position]
+                            try:
+                                val = data[part_sub][tind, dind, position]
+                            except(IndexError):
+                                # steric
+                                val = data[part_sub][tind, position]
+
                             if val == fill or np.isnan(val):
                                 val = valid
                             else:

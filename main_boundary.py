@@ -63,26 +63,29 @@ def main_boundary(grid, ext, data_list, subs, tref_model, model_dir):
                 print(ss)
     else:
         print('Data files found for all variables')
+    print('subs:')
     print(subs)
+    print('# of files available:')
     print(count)
     
+    # find the first substance that has a data file so the geometry can be extracted a single time
     ind = count > 0
     for i, bol in enumerate(ind):
         if bol:
             match =  i
             break
-    ind = match
-    ds = nc.Dataset(sub_data_list[ind][0])
+
+    ds = nc.Dataset(sub_data_list[match][0])
     XCM = ds.variables['longitude'][:]
     YCM = ds.variables['latitude'][:]
-    ind = 0
     CM = np.zeros((len(XCM)*len(YCM),2))
+    # array of X, Y
+    ind = 0
     for ii in XCM:
         for jj in YCM:
             CM[ind,0] = ii
             CM[ind,1] = jj
             ind += 1
-
 
     ###############################################################################
     # FIND LAT/LONG INDEX PAIR FOR EACH SUPPORT POINT IN EACH PLI
@@ -90,20 +93,25 @@ def main_boundary(grid, ext, data_list, subs, tref_model, model_dir):
 
     for bnd in boundaries.keys():
         if boundaries[bnd]['type'] == 'waterlevelbnd':
+            # assume absolute path to begin with
             pli_loc = 'absolute'
             try:
                 pli = read_pli(boundaries[bnd]['pli_loc'])
             except(FileNotFoundError):
-                pli_loc = 'local'
                 # could be local, so look in same folder as ext
-                pli_dir = ext[:find_last(ext,'\\')-1]
-                pli = read_pli(pli_dir + '\\' + boundaries[bnd]['pli_loc'])
 
+                pli_loc = 'local'
+                pli_dir = ext[:find_last(ext,'\\')-1]
+                try:
+                    pli = read_pli(pli_dir + '\\' + boundaries[bnd]['pli_loc'])
+                except(FileNotFoundError):
+                    print('No absolute path to pli provided and pli not located in local folder. Please copy the pli to the local folder')
+                    raise
             boundaries[bnd]['CMEMS_index'] = np.zeros((len(pli),2))
             # obtain indicies on CMEMS grid for all support points for all BND
             for ind, ii in enumerate(pli):
-                # we instead assume perefctly rectangular, which is what CMEMS is
-                # this means for every X value there is some correspondig constant Y
+                # we  assume perefctly rectangular, which is what the CMEMS grid is
+                # this means for every X value there is some corresponding constant Y
                 # and vice versa
                 Xind = np.argmin(np.abs(pli[ind,0] - XCM))
                 Yind = np.argmin(np.abs(pli[ind,1] - YCM))
@@ -120,6 +128,7 @@ def main_boundary(grid, ext, data_list, subs, tref_model, model_dir):
 
     for bnd in boundaries.keys():
         if boundaries[bnd]['type'] == 'waterlevelbnd':
+            # waterlevel because an ocean boundary should be waterlevel
             for sub in subs:
                 if sub in usefor.keys():
                     write_bcfile(model_dir, sub, data_list, boundaries, bnd, tref_model)
@@ -142,15 +151,10 @@ def main_boundary(grid, ext, data_list, subs, tref_model, model_dir):
                                 for line in lines:
                                     pli.write(line.replace(bnd, bnd + sub))  
                         else:
-                            #try:
                             with open(pli_dir + '\\' + boundaries[bnd]['pli_loc'], 'r') as bndFile:
                                 lines = bndFile.readlines()
                                 for line in lines:
                                     pli.write(line.replace(bnd, bnd + sub))     
-
-                            #except(FileNotFoundError):
-                            #    print('File not found, incorrect path parsed when reading *.ext')
-                            #    print('attempt was at %s' % boundaries[bnd]['pli_loc'])
                         
                     # copy the original boundary pli as well for the hydrodynamic model
                     try:
@@ -184,7 +188,6 @@ def main_boundary(grid, ext, data_list, subs, tref_model, model_dir):
 
         if isinstance(subs, str):
             # initials go in old style file
-            # make sure the domain pol exists first!
             grd = nc.Dataset(grid)
             x_min = np.min(grd.variables['mesh2d_node_x'][:])
             x_max = np.max(grd.variables['mesh2d_node_x'][:])

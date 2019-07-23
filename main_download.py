@@ -11,17 +11,20 @@ def main_download(time_vect, dataset, coords, user, pwd):
 
     '''
     writes the bat and sh files required to download the requested parameters from CMEMS
-    only linux has capabilities to retry the download if it failed
+    only linux has capabilities to retry the download if it failed NOT YET COMPLETE
     '''
 
     ###############################################################################
     # MAIN
     ###############################################################################
 
-    # quarter of a year is a good size based on trial and error
+    # quarter of a year is a good size based on trial and error, but this depends on the extent!
     max_time = np.ceil(365/4)
     tot_time = pd.Timestamp(time_vect['t_end']) - pd.Timestamp(time_vect['t_start'])
     num_time_intervals = np.ceil(tot_time.days / max_time)
+
+    if np.abs(coords[1] - coords[0]) * np.abs(coords[3] - coords[2]) > 858:
+        print('WARNING: REQUESTED SPATIAL EXTENT MAY BE TOO BIG FOR SERVER. TRY REDUCING SPATIAL EXTENT')
 
     times = []
     for tt in range(0, int(num_time_intervals)):
@@ -76,7 +79,7 @@ def main_download(time_vect, dataset, coords, user, pwd):
                 bat.write('\n timeout 10 \n')
         bat.write('\n pause')
     ###############################################################################
-    # LINUX
+    # LINUX - EXPERIMENTAL
     ###############################################################################
     with open(os.getcwd() + '\\CMEMS_download\\CMEMS_download_%s.sh' % dataset,'w') as shell:
         shell.write('#!/bin/bash\n')

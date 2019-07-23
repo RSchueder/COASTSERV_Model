@@ -15,6 +15,7 @@ time_vect = {'t_start' : '2012-01-01 12:00:00',
 dataset = 'physchem' # can be 'physchem' or 'bio'
 
 # max matrix size ~858
+# should be taken from web app
 coords = [-16,16,40,65] # xmin, xmax, ymin, ymax
 #coords = [-85, -75, -5, 1]
 
