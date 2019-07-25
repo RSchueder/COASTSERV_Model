@@ -1,0 +1,363 @@
+#!/bin/bash
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/chl_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ]; then
+   while (( ! -f "data/chl_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/chl_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ]; then
+   while (( ! -f "data/chl_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/chl_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ]; then
+   while (( ! -f "data/chl_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/chl_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ]; then
+   while (( ! -f "data/chl_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/chl_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ]; then
+   while (( ! -f "data/chl_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/chl_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ]; then
+   while (( ! -f "data/chl_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/chl_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ]; then
+   while (( ! -f "data/chl_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/chl_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ]; then
+   while (( ! -f "data/chl_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable chl --out-dir "data" --out-name chl_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/o2_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ]; then
+   while (( ! -f "data/o2_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/o2_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ]; then
+   while (( ! -f "data/o2_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/o2_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ]; then
+   while (( ! -f "data/o2_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/o2_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ]; then
+   while (( ! -f "data/o2_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/o2_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ]; then
+   while (( ! -f "data/o2_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/o2_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ]; then
+   while (( ! -f "data/o2_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/o2_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ]; then
+   while (( ! -f "data/o2_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/o2_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ]; then
+   while (( ! -f "data/o2_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable o2 --out-dir "data" --out-name o2_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/no3_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ]; then
+   while (( ! -f "data/no3_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/no3_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ]; then
+   while (( ! -f "data/no3_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/no3_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ]; then
+   while (( ! -f "data/no3_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/no3_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ]; then
+   while (( ! -f "data/no3_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/no3_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ]; then
+   while (( ! -f "data/no3_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/no3_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ]; then
+   while (( ! -f "data/no3_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/no3_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ]; then
+   while (( ! -f "data/no3_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/no3_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ]; then
+   while (( ! -f "data/no3_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable no3 --out-dir "data" --out-name no3_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/po4_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ]; then
+   while (( ! -f "data/po4_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/po4_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ]; then
+   while (( ! -f "data/po4_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/po4_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ]; then
+   while (( ! -f "data/po4_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/po4_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ]; then
+   while (( ! -f "data/po4_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/po4_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ]; then
+   while (( ! -f "data/po4_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/po4_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ]; then
+   while (( ! -f "data/po4_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/po4_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ]; then
+   while (( ! -f "data/po4_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/po4_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ]; then
+   while (( ! -f "data/po4_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable po4 --out-dir "data" --out-name po4_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/si_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ]; then
+   while (( ! -f "data/si_2000-01-01_12-00-00_2000-04-01_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-01-01 12:00:00 --date-max 2000-04-01 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2000-01-01_12-00-00_2000-04-01_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/si_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ]; then
+   while (( ! -f "data/si_2000-04-02_12-00-00_2000-07-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-04-02 12:00:00 --date-max 2000-07-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2000-04-02_12-00-00_2000-07-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/si_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ]; then
+   while (( ! -f "data/si_2000-07-03_12-00-00_2000-10-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-07-03 12:00:00 --date-max 2000-10-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2000-07-03_12-00-00_2000-10-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/si_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ]; then
+   while (( ! -f "data/si_2000-10-03_12-00-00_2001-01-02_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2000-10-03 12:00:00 --date-max 2001-01-02 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2000-10-03_12-00-00_2001-01-02_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/si_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ]; then
+   while (( ! -f "data/si_2001-01-03_12-00-00_2001-04-04_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-01-03 12:00:00 --date-max 2001-04-04 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2001-01-03_12-00-00_2001-04-04_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/si_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ]; then
+   while (( ! -f "data/si_2001-04-05_12-00-00_2001-07-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-04-05 12:00:00 --date-max 2001-07-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2001-04-05_12-00-00_2001-07-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/si_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ]; then
+   while (( ! -f "data/si_2001-07-06_12-00-00_2001-10-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-07-06 12:00:00 --date-max 2001-10-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2001-07-06_12-00-00_2001-10-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+python -m motu-client --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017 
+if [ ! -f "data/si_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ]; then
+   while (( ! -f "data/si_2001-10-06_12-00-00_2002-01-05_12-00-00.nc " ))
+   do
+       echo "ERROR: download failed on server end, retrying..."
+       echo "giving the server a break..."
+       sleep 10s
+       python -m motuclient --motu http://my.cmems-du.eu/motu-web/Motu --service-id GLOBAL_REANALYSIS_BIO_001_029-TDS --product-id global-reanalysis-bio-001-029-daily --longitude-min -85 --longitude-max -75 --latitude-min -5 --latitude-max 1 --date-min 2001-10-06 12:00:00 --date-max 2002-01-05 12:00:00 --depth-min 0.493 --depth-max 5727.918000000001 --variable si --out-dir "data" --out-name si_2001-10-06_12-00-00_2002-01-05_12-00-00.nc --user rschueder --pwd RudyCMEMS2017    done
+fi
+
+ pause

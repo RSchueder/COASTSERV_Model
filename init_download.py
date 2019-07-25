@@ -2,7 +2,7 @@
 CMEMS download input file
 '''
 from main_download import *
-
+from main_tide import *
 ###############################################################################
 # INPUT
 ###############################################################################
@@ -22,4 +22,5 @@ coords = [-16,16,40,65] # xmin, xmax, ymin, ymax
 user = 'rschueder'
 pwd = 'RudyCMEMS2017'
 
+main_tide(coords, pli)
 main_download(time_vect, dataset, coords, user, pwd)

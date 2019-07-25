@@ -1,5 +1,0 @@
-[boundary]
-quantity=waterlevelbnd
-locationfile=sea_boundary.pli
-forcingfile=seawaterlevel.bc
-
