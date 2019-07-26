@@ -1,16 +1,7 @@
 '''
-@schueder July 2019
+Model
 
-DFMWAQ ONLINE
-Creates boundary conditions from CMEMS output for online coupled DELWAQ runs
-This function takes:
-1. a grid
-2. a boundary file *.ext, new format
-3. a directory where CMEMS data was downloaed using download_config.py
-4. a sub file
-
-OFFLINE
-- NOT IMPLEMENTED
+A class that can create boundary conditions from CMEMS
 '''
 
 import os
@@ -26,8 +17,19 @@ from modules import *
 class Model(object):
 
     def __init__(self, ext, data_list, sub, tref, model_dir):
+        """
+        Model class
+        
+        Arguments:
+            ext {str} -- ext file produced from Tide.initiate_tide()
+            data_list {str} -- path to location of downloaded CMEMS *.nc files
+            sub {str/list} -- path to sub file, or list of constituents from ['salinity', 'temperature', 'uxuy', 'steric']
+            tref {datetime.datetime} -- datetime.datetime(yyyy,mm,dd,hh,MM,SS)
+            model_dir {str} -- path to output
+        """
+        
         self.ext       = ext
-        self.data_list = data_list
+        self.data_list = glob.glob(data_list)
         self.sub       = sub
         self.tref      = tref
         self.dir       = model_dir
@@ -567,7 +569,7 @@ class Model(object):
 class DCSM(Model):
     def __init__(self):
         ext = r'd:\projects\DWAQ_CMEMS\tests\DCSM\in\A07_new.ext'
-        data_list = glob.glob(r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc')
+        data_list = r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc'
         sub = ['salinity', 'temperature', 'uxuy', 'steric']
         tref = datetime.datetime(2011,12,22,00,00,00)
         model_dir = 'd:\\projects\\DWAQ_CMEMS\\tests\\DCSM\\out\\'
@@ -577,7 +579,7 @@ class DCSM(Model):
 class Guayaquil(Model):
     def __init__(self):
         ext = r'd:\projects\DWAQ_CMEMS\tests\Guayaquil\in\sea_riv_boundary_local_bc.ext'
-        data_list = glob.glob(r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc')
+        data_list = r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc'
         sub = r'd:\projects\DWAQ_CMEMS\tests\Guayaquil\in\guayas_V9.sub'
         tref = datetime.datetime(2000,1,1,00,00,00)
         model_dir = 'd:\\projects\\DWAQ_CMEMS\\tests\\Guayaquil\\out\\'

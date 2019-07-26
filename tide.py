@@ -1,6 +1,7 @@
 '''
-main tide
-creates an ext file and bc file for water level boundaries
+Tide
+
+A class that can create an ext file and bc file for water level boundaries, including astronomic boundary conditions from FES
 '''
 
 from modules import read_pli, make_len, find_last
@@ -13,6 +14,15 @@ import shutil as sh
 class Tide(object):
 
     def __init__(self, path, coords, pli, out):
+        """
+        Tide class
+        
+        Arguments:
+            path {str} -- path to folder containin fes data
+            coords {list} -- [xmin, xmax, ymin, ymax]
+            pli {str} -- path to *.pli file
+            out {path} -- path for output
+        """
         
         self.path = path
         # temporary
@@ -133,8 +143,8 @@ class Tide(object):
             AMP_keep = FES_amp
             PHA_keep = FES_pha
 
-            # produce masked versions of dato to fill in gaps later using nearest neighbour
-            # need to do this before changing mask to np.nan, which is necessary to indicate missing after interpolation
+            # produce masked versions of data to fill in gaps later using nearest neighbour
+            # need to do this before changing mask to np.nan, a step that is necessary to indicate missing after interpolation
             valid_pos = pos[AMP_keep.reshape(-1).mask == False]
             valid_amp = AMP_keep.reshape(-1)[AMP_keep.reshape(-1).mask == False]
             valid_pha = PHA_keep.reshape(-1)[PHA_keep.reshape(-1).mask == False] 
@@ -170,19 +180,17 @@ class Tide(object):
             
             pha[np.isnan(pha_real)] = np.nan
 
-            # method of checking
+            # method of checking plausibility of interpolation
             # plt.scatter(pos[:,0], pos[:,1], c = np.angle(FES_pha.reshape(-1)), vmin = -10, vmax = 10)
             # plt.scatter(X, Y, c = pha.reshape(-1), vmin = -10, vmax = 10)
             # plt.colorbar()
 
-            # this method is very slow
+            # for reference, this method is very slow
             # inter = sci.interpolate.interp2d(pos[:,0], pos[:,1], np.reshape(FES_amp, newshape = (-1,1)))   
             # amp = inter(X, Y)
 
             # As no extrapolation was performed, a natural neighbor
-            # interpolation is performed to fill some gaps in FES_amp/FES_pha.
-            # First, we create a land/sea mask.
-         
+            # interpolation is needed to fill some gaps in FES_amp/FES_pha.
             # fill missing values
             if sum(np.isnan(amp)) > 0:
 
@@ -203,7 +211,7 @@ class Tide(object):
 class DCSM(Tide):
     def __init__(self):
         path = 'p:\\1206126-nevref\\Maialen\\DATA\\fromCornelis\\FES2012\\fes2012\\data\\'
-        coords = [-16,16,40,65]
+        coords = [-16, 16, 40, 65]
         pli = r'p:\11202221-0004-dcsm-fm\models\model_input\bnd_cond\wl\FES2012\20181108\OB_all_20181108.pli'
         out =  'd:\\projects\\DWAQ_CMEMS\\tests\\DCSM\\out\\'
         super().__init__(path, coords, pli, out)

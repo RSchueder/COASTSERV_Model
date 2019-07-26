@@ -1,7 +1,7 @@
 '''
-@schueder July 2019
+Query
 
-settings for downloading data from CMEMS
+Class that can create batch files for downloading data from CMEMS
 '''
 import os
 import pandas as pd
@@ -10,6 +10,19 @@ import numpy as np
 class Query(object):
 
     def __init__(self, time_vect, dataset, coords, user, pwd, out):
+        """
+        Query class
+        
+        Arguments:
+            time_vect {dictionary} -- {'t_start' : 'yyyyy-mm-dd 12:00:00',
+                                       't_end'   : 'yyyy-mm-dd 12:00:00'}
+            dataset {str} -- 'physchem' or' bio'
+            coords {list} -- [xmin, xmax, ymin, ymax]
+            user {str} -- username
+            pwd {str} -- password
+            out {str} -- path for output of batch files
+        """
+        
         self.time_vect  = time_vect
         self.dataset    = dataset
         self.coords     = coords
