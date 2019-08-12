@@ -1,6 +1,14 @@
 # DWAQ_CMEMS
 Tools for nesting coastal DFM and DFMWAQ models in FES tide model output and CMEMS MERCATOR global physiochemical and biogeochemical model output 
 
+# Prerequisites
+packages not standard to Anaconda:
+* motuclient
+* netCDF4
+other requirements:
+* python must be in PATH environment variable
+* might only work on systems with english language/keyboard
+
 # Usage
 The tool workflow is designed such that the user is expected to start with a bounding box on the globe and line segments that they wish to define model boundaries on.
 These are expected to come from a web app or manual perscription.
@@ -20,7 +28,7 @@ Class 3: Model
 * Model.initiate_model() produces *.bc files for the requested constituents/subs
 * See subclasses DCSM and Guayaquil for examples of constructor parameters
 
-# Example of usage for a single pli
+# Example of usage for a single pli (see example.py)
 
 **DATA QUERY**
 
@@ -64,6 +72,8 @@ medmod.build_boundary(interp = True, simultaneous = False)
   If there are multiple constituents that share a boundary there is no guarantee the last one is WL. In this case the pli will not be labelled as a WL boundary, and constituents will not be created for it. 
   For hydrodynamics this is less important (as sal and temp are skipped likely because they already exist), but this is inappropriate for WAQ. Therefore, currently the ext file should contain only the waterlevel constituent for any boundary
   that additional constituents are to be written for.
+* Multiple plis can be dealt with using a for loop. However, the ext file will only reflect the last pli. Manual copy and paste is required.
+* River loads based on Emilio Mayorga et al., (2010)
 
 # Known issues
 * There is no check done on whether a server request was ultimately rejected after 10 failed attempts. Funtionality has been started to address this in linux. The script will not work correctly if different constituents have data covering different time periods.
