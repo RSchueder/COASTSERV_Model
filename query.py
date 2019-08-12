@@ -36,7 +36,7 @@ class Query(object):
         # to remove need to write self. in all of the functions that were previously not part of this class
         self.create_query(self.time_vect, self.dataset, self.coords, self.user, self.pwd, self.out)
 
-    def create_query(self, time_vect, dataset, coords, user, pwd,out):
+    def create_query(self, time_vect, dataset, coords, user, pwd, out):
 
         '''
         writes the bat and sh files required to download the requested parameters from CMEMS
@@ -88,8 +88,8 @@ class Query(object):
         ###############################################################################
         print('writing query')
 
-        with open(os.getcwd() + '\\' + out + 'CMEMS_download_%s.bat' % dataset,'w') as bat:
-            self.bat = os.getcwd() + '\\' + out + 'CMEMS_download_%s.bat' % dataset
+        with open(out + 'CMEMS_download_%s.bat' % dataset,'w') as bat:
+            self.bat = out + 'CMEMS_download_%s.bat' % dataset
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
                     bat.write('python -m motuclient ')
@@ -108,8 +108,8 @@ class Query(object):
         ###############################################################################
         # LINUX - EXPERIMENTAL
         ###############################################################################
-        with open(os.getcwd() + '\\' + out + 'CMEMS_download_%s.sh' % dataset,'w') as shell:
-            self.sh = os.getcwd() + '\\' + out + 'CMEMS_download_%s.sh' % dataset
+        with open(out + 'CMEMS_download_%s.sh' % dataset,'w') as shell:
+            self.sh = out + 'CMEMS_download_%s.sh' % dataset
             shell.write('#!/bin/bash\n')
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):

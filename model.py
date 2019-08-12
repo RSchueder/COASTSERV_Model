@@ -5,7 +5,6 @@ A class that can create boundary conditions from CMEMS
 '''
 
 import os
-import d3d
 import glob
 import datetime
 import numpy as np 
@@ -392,7 +391,11 @@ class Model(object):
                     depths = [0]
             file_time = ds.variables['time'][:]
             times = np.concatenate((times, file_time))
-        fill = ds.variables[csub['substance'][0]]._FillValue 
+        try:
+            fill = ds.variables[csub['substance'][0]]._FillValue 
+        except(UnboundLocalError):
+            print('ERROR: critical lack of files!')
+            raise
         times = np.array(times)
 
         return times, depths, fill
