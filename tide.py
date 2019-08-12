@@ -54,7 +54,10 @@ class Tide(object):
             ext.write('quantity=waterlevelbnd\n')
             ext.write('locationfile=%s\n' % os.path.split(self.pli)[1])
             ext.write('forcingfile=tide_%s.bc\n' % name)
-            sh.copyfile(self.pli, self.out + self.pli[find_last(self.pli, '\\'):])
+            try:
+                sh.copyfile(self.pli, self.out + self.pli[find_last(self.pli, '\\'):])
+            except():
+                print('It appears the *.pli file already exists next to the *.ext file, skipping copy...')
         self.ext = self.out + '%s.ext' % name
 
     def write_tide(self):
@@ -93,7 +96,7 @@ class Tide(object):
         LON[LON>180] = LON[LON>180]-360 #wrapTo180
         LAT          = dat['lat'][:]
         
-        # downsize dataset
+        # downsize dataset based on bounding box
         downsize = True     
         if downsize:
             x_min = np.argmin(abs(LON - self.coords[0]))

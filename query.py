@@ -105,7 +105,6 @@ class Query(object):
                             else:
                                 bat.write('--%s %s ' % (arg, args[arg]))
                     bat.write('\n timeout 10 \n')
-            bat.write('\n pause')
         ###############################################################################
         # LINUX - EXPERIMENTAL
         ###############################################################################
@@ -151,7 +150,6 @@ class Query(object):
                                 shell.write('--%s %s ' % (arg, args[arg]))
                     shell.write('   done\n')
                     shell.write('fi\n')                
-            shell.write('\n pause')
 
         print('finished writing query')
     

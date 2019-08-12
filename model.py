@@ -265,6 +265,7 @@ class Model(object):
 
                     for tind, tt in enumerate(times):
                         tdiff = tt - tref_model
+                        # to minutes
                         bcfile.write(str((tdiff.seconds / 60) + (tdiff.days * 1440)))
                         bcfile.write('  ')
                         valid = -999.999
@@ -599,9 +600,9 @@ class Model(object):
         write the header information for a bc file
         '''
         handle.write('[forcing]\n')
-        handle.write('Name                            = %s%s_%s\n' % (pli_name.replace('.pli',''), sub, make_len(support+1, 4)))
 
         if sub != 'steric':
+            handle.write('Name                            = %s%s_%s\n' % (pli_name.replace('.pli',''), sub, make_len(support+1, 4)))
             handle.write('Function                        = t3D\n')
             handle.write('Time-interpolation              = linear\n')
             handle.write('Vertical position type          = zdatum\n')
@@ -611,6 +612,7 @@ class Model(object):
                 handle.write('-%.2f  ' % dep)
             handle.write('\n')
         else:
+            handle.write('Name                            = %s_%s\n' % (pli_name.replace('.pli',''), make_len(support+1, 4)))
             handle.write('Function                        = timeseries\n')
             handle.write('Time-interpolation              = linear\n')       
 
