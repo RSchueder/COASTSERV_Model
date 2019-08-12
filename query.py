@@ -6,6 +6,8 @@ Class that can create batch files for downloading data from CMEMS
 import os
 import pandas as pd
 import numpy as np 
+import subprocess
+import sys
 
 class Query(object):
 
@@ -30,7 +32,7 @@ class Query(object):
         self.pwd        = pwd
         self.out        = out
 
-    def initiate_query(self):
+    def build_query(self):
         # to remove need to write self. in all of the functions that were previously not part of this class
         self.create_query(self.time_vect, self.dataset, self.coords, self.user, self.pwd, self.out)
 
@@ -84,7 +86,10 @@ class Query(object):
         ###############################################################################
         # WINDOWS
         ###############################################################################
+        print('writing query')
+
         with open(os.getcwd() + '\\' + out + 'CMEMS_download_%s.bat' % dataset,'w') as bat:
+            self.bat = os.getcwd() + '\\' + out + 'CMEMS_download_%s.bat' % dataset
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
                     bat.write('python -m motuclient ')
@@ -105,6 +110,7 @@ class Query(object):
         # LINUX - EXPERIMENTAL
         ###############################################################################
         with open(os.getcwd() + '\\' + out + 'CMEMS_download_%s.sh' % dataset,'w') as shell:
+            self.sh = os.getcwd() + '\\' + out + 'CMEMS_download_%s.sh' % dataset
             shell.write('#!/bin/bash\n')
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
@@ -146,6 +152,31 @@ class Query(object):
                     shell.write('   done\n')
                     shell.write('fi\n')                
             shell.write('\n pause')
+
+        print('finished writing query')
+    
+    def send_request(self):
+        """
+        runs the created batch file
+        """
+        print('sending request via bat file')
+        print(self.bat)
+        with open(self.bat, 'r') as batfile:
+            for command in batfile.readlines():
+                if 'python' in command:
+                    command.replace('python', '')
+        p = subprocess.Popen(self.bat, shell = True, stdout=subprocess.PIPE)
+        while True:
+            out = p.stderr.read(1)
+            if out == '' and p.poll() != None:
+                break
+            if out != '':
+                sys.stdout.write(out)
+                sys.stdout.flush()
+        out, err = p.communicate()
+        print(out, err)
+        print('request processing finished')
+
 
 class DCSM(Query):
     def __init__(self):

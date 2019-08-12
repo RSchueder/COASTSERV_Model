@@ -10,7 +10,7 @@ import glob
 import scipy as sci
 import numpy as np
 import shutil as sh
-
+import os
 class Tide(object):
 
     def __init__(self, path, coords, pli, out):
@@ -48,22 +48,26 @@ class Tide(object):
 
 
     def write_ext(self, out):
-        with open(self.out + 'model.ext','w') as ext:
+        name = os.path.split(self.pli)[1][:find_last(os.path.split(self.pli)[1],'.')-1]
+        with open(self.out + '%s.ext' % name,'w') as ext:
             ext.write('[boundary]\n')
             ext.write('quantity=waterlevelbnd\n')
-            ext.write('locationfile=waterlevel.pli\n')
-            ext.write('forcingfile=tide.bc\n')
+            ext.write('locationfile=%s\n' % os.path.split(self.pli)[1])
+            ext.write('forcingfile=tide_%s.bc\n' % name)
             sh.copyfile(self.pli, self.out + self.pli[find_last(self.pli, '\\'):])
-
+        self.ext = self.out + '%s.ext' % name
 
     def write_tide(self):
         self.write_ext(self.out)
         self.interp_tide()
-        with open(self.out + '\\' + 'tide.bc', 'w') as bnd:
+
+        name = os.path.split(self.pli)[1][:find_last(os.path.split(self.pli)[1],'.')-1]
+
+        with open(self.out + '\\' + 'tide_%s.bc' % name, 'w') as bnd:
             for ss in range(0,len(self.X)):
                 zz = make_len(ss+1, 4)
                 bnd.write('[forcing]\n')
-                bnd.write('Name = %s_%s\n' % ('sea_boundary',zz))
+                bnd.write('Name = %s_%s\n' % (name,zz))
                 bnd.write('Function = astronomic\n')
                 bnd.write('Quantity = astronomic component\n')
                 bnd.write('Unit = -\n')
@@ -193,7 +197,7 @@ class Tide(object):
             # interpolation is needed to fill some gaps in FES_amp/FES_pha.
             # fill missing values
             if sum(np.isnan(amp)) > 0:
-
+                #print(np.transpose(np.array([self.X.reshape(-1,1)[np.isnan(amp)], self.Y.reshape(-1,1)[np.isnan(amp)]])))
                 amp[np.isnan(amp)] = sci.interpolate.griddata(valid_pos, valid_amp, np.transpose(np.array([self.X.reshape(-1,1)[np.isnan(amp)], self.Y.reshape(-1,1)[np.isnan(amp)]])), fill_value = np.nan, method = 'nearest')
                 pha[np.isnan(pha)] = sci.interpolate.griddata(valid_pos, valid_pha, np.transpose(np.array([self.X.reshape(-1,1)[np.isnan(pha)], self.Y.reshape(-1,1)[np.isnan(pha)]])), fill_value = np.nan, method = 'nearest')
                 #amp[np.isnan(amp)] = sci.interpolate.griddata(valid_pos, valid_amp, np.transpose(np.array([X[-1], Y[-1]])), fill_value = np.nan, method = 'nearest')
