@@ -161,20 +161,7 @@ class Query(object):
         """
         print('sending request via bat file')
         print(self.bat)
-        with open(self.bat, 'r') as batfile:
-            for command in batfile.readlines():
-                if 'python' in command:
-                    command.replace('python', '')
-        p = subprocess.Popen(self.bat, shell = True, stdout=subprocess.PIPE)
-        while True:
-            out = p.stderr.read(1)
-            if out == '' and p.poll() != None:
-                break
-            if out != '':
-                sys.stdout.write(out)
-                sys.stdout.flush()
-        out, err = p.communicate()
-        print(out, err)
+        os.system(self.bat)
         print('request processing finished')
 
 
