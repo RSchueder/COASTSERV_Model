@@ -1,73 +1,103 @@
 # DWAQ_CMEMS
-Tools for nesting coastal DFM and DFMWAQ models in FES tide model output and CMEMS MERCATOR global physiochemical and biogeochemical model output 
+A program for nesting coastal DFM and DFMWAQ models in FES tide model output and CMEMS MERCATOR global physiochemical and biogeochemical model output. It includes utilities for downloading and processing the data. 
 
 # Prerequisites
-packages not standard to Anaconda:
+**packages not standard to Anaconda:**
 * motuclient
-* netCDF4
-other requirements:
+* netCDF4 
+
+**other requirements:**
 * python must be in PATH environment variable
 * might only work on systems with english language/keyboard
 
 # Usage
-The tool workflow is designed such that the user is expected to start with a bounding box on the globe and line segments that they wish to define model boundaries on.
-These are expected to come from a web app or manual perscription.
+The tool workflow is designed such that the user is expected to start with a bounding box [xmin, xmax, ymin, ymax] on the globe and line segments (x,y) that they wish to define model boundaries on.
+These are expected to come from a web app or manual perscription. The bounding box is a list of floats and the line segment boundaries are ascii polygon filea (referred to as a *.pli in dflowfm).
 
-Class 1: Tide
+**Class : query = Query(time_vect, dataset, coords, user, pwd, out)**
+
+**constructs and sends a request to CMEMS server for data download**
+* Constructed using a time frame, dataset type,  bounding box, user, password, and output path
+* Query.build_query() produces the batch files necessary to request files from the server
+* Query.send_request() executes the batch files
+* See subclasses DCSM and Guayaquil for examples of constructor parameters
+
+**Class : tide = Tide(fes_path, coords, pli, out)**
+
+**constructs astronomical constituent boundaries for coastal tidal waterlevels**
 * Constructed using a pli file, a FES data path,  a bounding box, and an output path
 * Tide.initiate_tide() produces an *.ext file and the waterlevel *.bc file
 * See subclasses DCSM and Guayaquil for examples of constructor parameters
 
-Class 2: Query
-* Constructed using a time frame, dataset type,  bounding box, user, password, and output path
-* Query.initiate_query() produces the batch files necessary to request files from the server
-* See subclasses DCSM and Guayaquil for examples of constructor parameters
+**Class : model = Model(ext, data_list, sub, tref, model_dir)**
 
-Class 3: Model
-* constructed using an ext file produced by Tide.initiate_tide(), a path to data resulting from the Query.initiate_query() batch file execution, a sub list (either as a list or a sub file), a reference time, and an out model dir
+**constructs constituent boundaries for coastal model boundaries**
+* Constructed using an ext file produced by Tide.initiate_tide(), a path to data resulting from the Query.build_query() method, a sub list (either as a list or a sub file), a reference time, and an out model dir
 * Model.initiate_model() produces *.bc files for the requested constituents/subs
 * See subclasses DCSM and Guayaquil for examples of constructor parameters
+* see the dictionary usefor in units.py for implemented constituents
 
 # Example of usage for a single pli (see example.py)
 
 import tide
+
 import query
+
 import model
+
 import datetime
 
-**DATA QUERY**
+**QUERY - DATA DOWNLOAD**
 
 time_vect  = {'t_start' : '2017-05-15 12:00:00',
               't_end'   : '2017-09-15 12:00:00'}
+              
 dataset    = 'physchem'
-user       = 'rschueder'
+
+user       = 'JohnDoe'
+
 pwd        = '*****'
+
 out        = 'd:\\projects\\DWAQ_CMEMS\\tests\\Med\\out\\'
+
 coords     = [0, 2, 39, 42]
-#
+
+
 medq = query.Query(time_vect, dataset, coords, user, pwd, out)
+
 medq.build_query()
+
 medq.send_request()
 
-**TIDE BOUNDARY**
+**TIDE - TIDE BOUNDARY**
 
 fes_path = 'p:\\1206126-nevref\\Maialen\\DATA\\fromCornelis\\FES2012\\fes2012\\data\\'
-pli =  r'd:\projects\DWAQ_CMEMS\tests\Med\in\Boundary01.pli'
-out        = 'd:\\projects\\DWAQ_CMEMS\\tests\\Med\\out\\'
-medtide = tide.Tide(fes_path, coords, pli, out)
+
+pli      =  r'd:\projects\DWAQ_CMEMS\tests\Med\in\Boundary01.pli'
+
+out      = 'd:\\projects\\DWAQ_CMEMS\\tests\\Med\\out\\'
+
+medtide  = tide.Tide(fes_path, coords, pli, out)
+
 medtide.initiate_tide()
 
-**CONSTITUENT BOUNDARY**
+**MODEL - CONSTITUENT BOUNDARY**
 
 ext = medtide.ext
-data_list = r'd:\\projects\DWAQ_CMEMS\\tests\\Med\\out\\data\\*.nc'
-sub       = ['salinity', 'temperature', 'uxuy', 'steric']
-tref      = datetime.datetime(2000,1,1,00,00,00)
-model_dir = medtide.out
-medmod    = model.Model(ext, data_list, sub, tref, model_dir)
-medmod.build_boundary(interp = True, simultaneous = False)
 
-**(the steps excluding the download step can now be re-run for additional pli files)**
+data_list = r'd:\\projects\DWAQ_CMEMS\\tests\\Med\\out\\data\\*.nc'
+
+sub       = ['salinity', 'temperature', 'uxuy', 'steric']
+
+tref      = datetime.datetime(2000,1,1,00,00,00)
+
+model_dir = medtide.out
+
+medmod    = model.Model(ext, data_list, sub, tref, model_dir)
+
+medmod.build_boundary(interp = True, simultaneous = True)
+
+**(the steps excluding the download step can now be re-run for additional pli files in a for loop)**
 
 # To-do
 * (Maybe) implement improved Model.boundary_from_ext() as per dflowutil. Currently a boundary is defined by a pli, and a pli has a type as defined by the constituent residing one line up. 
