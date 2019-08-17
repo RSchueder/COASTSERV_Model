@@ -39,13 +39,15 @@ These are expected to come from a web app or manual perscription. The bounding b
 
 # Example of usage for a single pli (see example.py)
 
+import os
+
+import datetime
+
 import tide
 
 import query
 
 import model
-
-import datetime
 
 **QUERY - DATA DOWNLOAD**
 
@@ -54,48 +56,45 @@ time_vect  = {'t_start' : '2017-05-15 12:00:00',
               
 dataset    = 'physchem'
 
-user       = 'JohnDoe'
+credentials = 'credentials.json'
 
-pwd        = '*****'
-
-out        = 'd:\\projects\\DWAQ_CMEMS\\tests\\Med\\out\\'
+out        = os.path.join(os.getcwd(), 'tests', 'Med' , 'out')
 
 coords     = [0, 2, 39, 42]
 
+med_query = query.Query(time_vect, dataset, coords, credentials, out)
 
-medq = query.Query(time_vect, dataset, coords, user, pwd, out)
+med_query.build_query()
 
-medq.build_query()
-
-medq.send_request()
+med_query.send_request()
 
 **TIDE - TIDE BOUNDARY**
 
-fes_path = 'p:\\1206126-nevref\\Maialen\\DATA\\fromCornelis\\FES2012\\fes2012\\data\\'
+fes_path = os.path.join('p','1206126-nevref','Maialen','DATA','fromCornelis','FES2012','fes2012','data')
 
-pli      =  r'd:\projects\DWAQ_CMEMS\tests\Med\in\Boundary01.pli'
+pli      =  os.path.join(os.getcwd(), 'tests', 'Med' , 'in', 'Boundary01.pli')
 
-out      = 'd:\\projects\\DWAQ_CMEMS\\tests\\Med\\out\\'
+out      = os.path.join(os.getcwd(), 'tests', 'Med' , 'out')
 
-medtide  = tide.Tide(fes_path, coords, pli, out)
+med_tide  = tide.Tide(fes_path, coords, pli, out)
 
-medtide.initiate_tide()
+med_tide.initiate_tide()
 
 **MODEL - CONSTITUENT BOUNDARY**
 
-ext = medtide.ext
+ext = med_tide.ext
 
-data_list = r'd:\\projects\DWAQ_CMEMS\\tests\\Med\\out\\data\\*.nc'
+data_list = os.path.join(os.getcwd(), 'tests', 'Med' , 'out', 'data', '*.nc')
 
 sub       = ['salinity', 'temperature', 'uxuy', 'steric']
 
 tref      = datetime.datetime(2000,1,1,00,00,00)
 
-model_dir = medtide.out
+model_dir = med_tide.out
 
-medmod    = model.Model(ext, data_list, sub, tref, model_dir)
+med_mod   = model.Model(ext, data_list, sub, tref, model_dir)
 
-medmod.build_boundary(interp = True, simultaneous = True)
+med_mod.build_boundary(interp = True, simultaneous = True)
 
 **(the steps excluding the download step can now be re-run for additional pli files in a for loop)**
 
@@ -106,9 +105,9 @@ medmod.build_boundary(interp = True, simultaneous = True)
   For hydrodynamics this is less important (as sal and temp are skipped likely because they already exist), but this is inappropriate for WAQ. Therefore, currently the ext file should contain only the waterlevel constituent for any boundary
   that additional constituents are to be written for.
 * Multiple plis can be dealt with using a for loop. However, the ext file will only reflect the last pli. Manual copy and paste is required.
-* River loads based on Emilio Mayorga et al., (2010)
+* River loads based on Emilio Mayorga et al., (2010). Currently we do not have access to this data,
 
 # Known issues
-* There is no check done on whether a server request was ultimately rejected after 10 failed attempts. Funtionality has been started to address this in linux. The script will not work correctly if different constituents have data covering different time periods.
-* (If ext file does not come from Tide.initiate_tide()) The routine to create the *.ext file was designed for water quality constituents, and so if the tool is used to make salinity and temperature boundaries, the *.ext file might need to be manually adjusted if previous salinity and temperature values were specified. All new boundaries are simply appended to the existing *.ext file.
+* The method Query.send_request_linux() will not work on some computers if the sudo python environment is not configured correctly. The script can be run manually however.
+* (If ext file does not come from Tide.initiate_tide()) The routine to create the *.ext file was designed for water quality constituents, and so if the tool is used to make salinity and temperature boundaries, the *.ext file might need to be manually adjusted if previous salinity and temperature values were specified. All new boundaries are simply appended to the existing *.ext file. **It is recommended that the source *.ext file only contain a single waterlevel boundary per pli if the *.ext is made manually.**
 

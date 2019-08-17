@@ -11,6 +11,7 @@ import scipy as sci
 import numpy as np
 import shutil as sh
 import os
+
 class Tide(object):
 
     def __init__(self, path, coords, pli, out):
@@ -25,9 +26,7 @@ class Tide(object):
         """
         
         self.path = path
-        # temporary
-        #self.path = 'p:\\1206126-nevref\\Maialen\\DATA\\fromCornelis\\FES2012\\fes2012\\data\\'
-        self.representative = glob.glob(self.path + '*SLEV.nc')[0]
+
         self.const = ['2N2',   
             'MF'   , 
             'P1'   , 
@@ -36,6 +35,7 @@ class Tide(object):
             'S2'  ,  'L2'  ,  'M8'  ,  'MSF' ,  'O1'  ,  'S4' ] 
 
         XY = read_pli(pli)
+
         self.pli = pli
         self.X = XY[:,0]
         self.Y = XY[:,1]   
@@ -43,11 +43,21 @@ class Tide(object):
         self.coords = coords
         self.out = out    
 
+        try:
+            self.representative = glob.glob(self.path + '*SLEV.nc')[0]
+        except(IndexError):
+            print('ERROR: NO DATA FOUND IN FES PATH, NOT VALID TIDE OBJECT')
+            self.representative = None
+              
+
     def initiate_tide(self):
-        self.write_tide()
+        if self.representative is not None:
+            self.write_tide()
+        else:
+            print('ERROR: NO DATA FOUND IN FES PATH, NOT VALID TIDE OBJECT')
 
 
-    def write_ext(self, out):
+    def write_ext(self):
         name = os.path.split(self.pli)[1][:find_last(os.path.split(self.pli)[1],'.')-1]
         with open(self.out + '%s.ext' % name,'w') as ext:
             ext.write('[boundary]\n')
@@ -60,13 +70,14 @@ class Tide(object):
                 print('It appears the *.pli file already exists next to the *.ext file, skipping copy...')
         self.ext = self.out + '%s.ext' % name
 
+
     def write_tide(self):
         self.write_ext(self.out)
         self.interp_tide()
 
         name = os.path.split(self.pli)[1][:find_last(os.path.split(self.pli)[1],'.')-1]
 
-        with open(self.out + '\\' + 'tide_%s.bc' % name, 'w') as bnd:
+        with open( os.path.join(self.out,'tide_%s.bc' % name), 'w') as bnd:
             for ss in range(0,len(self.X)):
                 zz = make_len(ss+1, 4)
                 bnd.write('[forcing]\n')

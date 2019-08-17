@@ -4,6 +4,7 @@ Query
 Class that can create batch files for downloading data from CMEMS
 '''
 import os
+import json
 import pandas as pd
 import numpy as np 
 import subprocess
@@ -11,7 +12,7 @@ import sys
 
 class Query(object):
 
-    def __init__(self, time_vect, dataset, coords, user, pwd, out):
+    def __init__(self, time_vect, dataset, coords, credentials, out):
         """
         Query class
         
@@ -28,8 +29,12 @@ class Query(object):
         self.time_vect  = time_vect
         self.dataset    = dataset
         self.coords     = coords
-        self.user       = user
-        self.pwd        = pwd
+
+        with open(credentials) as cred_file:
+            cred = json.load(cred_file)
+            
+        self.user       = cred['user']
+        self.pwd        = cred['pwd']
         self.out        = out
 
     def build_query(self):
@@ -80,16 +85,17 @@ class Query(object):
                 'user'         : user, 
                 'pwd'          : pwd}
 
-        if not os.path.exists(out + args['out-dir'].replace('"','') + '\\'):
-            os.mkdir(out + args['out-dir'].replace('"','') + '\\')
+        if not os.path.exists(os.path.join(out, args['out-dir'].replace('"',''))):
+            os.mkdir(os.path.join(out, args['out-dir'].replace('"','')))
         
         ###############################################################################
         # WINDOWS
         ###############################################################################
         print('writing query')
 
-        with open(out + 'CMEMS_download_%s.bat' % dataset,'w') as bat:
-            self.bat = out + 'CMEMS_download_%s.bat' % dataset
+        self.bat = os.path.join(out, 'CMEMS_download_%s.bat' % dataset)
+
+        with open(self.bat, 'w') as bat:
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
                     bat.write('python -m motuclient ')
@@ -101,19 +107,21 @@ class Query(object):
                             elif arg == 'date-max':
                                 bat.write('--date-max "' + str(times[tt][1]) + '" ')
                             elif arg == 'out-name':
-                                bat.write('--out-name ' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc ')
+                                bat.write('--out-name ' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc')
                             else:
                                 bat.write('--%s %s ' % (arg, args[arg]))
                     bat.write('\n timeout 10 \n')
         ###############################################################################
         # LINUX - EXPERIMENTAL
         ###############################################################################
-        with open(out + 'CMEMS_download_%s.sh' % dataset,'w') as shell:
-            self.sh = out + 'CMEMS_download_%s.sh' % dataset
+        
+        self.sh = os.path.join(out, 'CMEMS_download_%s.sh' % dataset)
+
+        with open(self.sh,'w') as shell:
             shell.write('#!/bin/bash\n')
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
-                    shell.write('python -m motu-client ')
+                    shell.write('python -m motuclient ')
                     for arg in args.keys():
                             if arg == 'variable':
                                 shell.write('--variable ' + sub + ' ')
@@ -126,12 +134,12 @@ class Query(object):
                             else:
                                 shell.write('--%s %s ' % (arg, args[arg]))
                     
-                    out_name = args['out-dir'].replace('"','').replace('\\','/') + '/' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc '        
+                    out_name = args['out-dir'].replace('"','').replace('\\','/') + '/' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc'        
                     
-                    # test for success of download
+                    # test for success of download - EXPERIMENTAL
                     shell.write('\n')
-                    shell.write('if [ ! -f "%s" ]; then\n' % out_name)
-                    shell.write('   while (( ! -f "%s" ))\n' % out_name)
+                    shell.write('if [ ! -f "%s" ]; then\n' % (os.path.join(os.getcwd(), out, out_name)))
+                    shell.write('   while (( ! -f "%s" ))\n' % (os.path.join(os.getcwd(), out, out_name)))
                     shell.write('   do\n')
                     shell.write('       echo "ERROR: download failed on server end, retrying..."\n')
                     shell.write('       echo "giving the server a break..."\n')
@@ -148,40 +156,52 @@ class Query(object):
                                 shell.write('--out-name ' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc ')
                             else:
                                 shell.write('--%s %s ' % (arg, args[arg]))
+                    shell.write('\n')
                     shell.write('   done\n')
                     shell.write('fi\n')                
 
         print('finished writing query')
     
-    def send_request(self):
+
+    def send_request_windows(self):
         """
         runs the created batch file
         """
-        print('sending request via bat file')
+        print('sending request via *.bat file')
         print(self.bat)
         os.system(self.bat)
         print('request processing finished')
 
 
+    def send_request_linux(self):
+        """
+        runs the created shell script
+        """
+        print('sending request via *.sh file')
+        print(self.sh)
+        os.system('chmod 777 ' + self.sh)
+        # will not work if sudo python environment variables are not the same as user
+        os.system('sudo ' + self.sh)
+        print('request processing finished')
+
+
 class DCSM(Query):
     def __init__(self):
-        time_vect  = {'t_start' : '2012-01-01 12:00:00',
+        time_vect   = {'t_start' : '2012-01-01 12:00:00',
                       't_end'   : '2013-01-01 12:00:00'}
-        dataset    = 'physchem'
-        coords     = [-16,16,40,65]
-        user       = 'rschueder'
-        pwd        = 'RudyCMEMS2017'
-        out        = 'tests\\DCSM\\out\\'
-        super().__init__(time_vect, dataset, coords, user, pwd, out)
+        dataset     = 'physchem'
+        coords      = [-16,16,40,65]
+        credentials = 'credentials.json'
+        out         = os.path.join(os.getcwd(), 'tests','DCSM','out')
+        super().__init__(time_vect, dataset, coords, credentials, out)
 
 
 class Guayaquil(Query):
     def __init__(self):
-        time_vect  = {'t_start' : '2000-01-01 12:00:00',
+        time_vect   = {'t_start' : '2000-01-01 12:00:00',
                       't_end'   : '2002-01-01 12:00:00'}
-        dataset    = 'bio'
-        coords     = [-85, -75, -5, 1]
-        user       = 'rschueder'
-        pwd        = 'RudyCMEMS2017'
-        out        = 'tests\\Guayaquil\\out\\'
-        super().__init__(time_vect, dataset, coords, user, pwd, out)
+        dataset     = 'bio'
+        coords      = [-85, -75, -5, 1]
+        credentials = 'credentials.json'
+        out         = os.path.join(os.getcwd(), 'tests','Guayaquil','out')
+        super().__init__(time_vect, dataset, coords, credentials, out)

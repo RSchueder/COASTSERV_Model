@@ -195,9 +195,10 @@ class Model(object):
             pli = read_pli(boundaries[bnd][pli_loc_key])
         except(FileNotFoundError):
             # could be local, so look in same folder as ext
-            pli_dir = ext[:find_last(ext,'\\')-1]
+            # pli_dir = ext[:find_last(ext,'\\')-1]
+            pli_dir = os.path.split(ext)[0]
             try:
-                boundaries[bnd][pli_loc_key] = pli_dir + '\\' + boundaries[bnd][pli_loc_key]
+                boundaries[bnd][pli_loc_key] = os.path.join(pli_dir, boundaries[bnd][pli_loc_key])
                 pli = read_pli(boundaries[bnd][pli_loc_key])
             except(FileNotFoundError):
                 print('No absolute path to pli provided and pli not located in local folder. Please copy the pli to the local folder')
@@ -320,7 +321,7 @@ class Model(object):
 
         for part_sub_i, part_sub in enumerate(csub['substance']):
             for file_index, data_file in enumerate(data_list[part_sub_i]):
-                print('reading data file ' + data_file[find_last(data_file,'\\'):])
+                print('reading data file ' + os.path.split(data_file)[1])
                 ds = nc.Dataset(data_file, 'r')
                 # these are times local to only this file
                 # these are needed to determine the location in the all array for the data to be inserted
@@ -670,7 +671,8 @@ class Model(object):
                                     pli.write(line.replace(bnd, bnd + sub))  
     
                 # copy the original boundary pli as well for the hydrodynamic model
-                file_name = boundaries[bnd][pli_loc_key][find_last(boundaries[bnd][pli_loc_key],'\\'):]
+                # file_name = boundaries[bnd][pli_loc_key][find_last(boundaries[bnd][pli_loc_key],'\\'):]
+                file_name = os.path.split(boundaries[bnd][pli_loc_key])[1]
                 try:
                     sh.copyfile(boundaries[bnd][pli_loc_key], model_dir + file_name)
                 except(sh.SameFileError):
