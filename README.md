@@ -1,4 +1,4 @@
-# DWAQ_CMEMS
+# COASTSERV_Model
 A program for nesting coastal DFM and DFMWAQ models in FES tide model output and CMEMS MERCATOR global physiochemical and biogeochemical model output. It includes utilities for downloading and processing the data. 
 
 # Prerequisites
