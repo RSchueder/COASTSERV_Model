@@ -5,7 +5,6 @@ functions for facilitation boundary condition file creation
 '''
 
 import os
-import gc
 import glob
 import datetime
 import numpy as np 

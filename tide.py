@@ -4,7 +4,7 @@ Tide
 A class that can create an ext file and bc file for water level boundaries, including astronomic boundary conditions from FES
 '''
 
-from modules import read_pli, make_len, find_last
+import utils
 import netCDF4 as nc
 import glob
 import scipy as sci
@@ -34,7 +34,7 @@ class Tide(object):
             'R2'  ,  'K1'  ,  'M4'  ,  'MN4' ,  'S1'  ,  'K2'  ,  'M6'  , 'MS4' ,  'NU2' ,  
             'S2'  ,  'L2'  ,  'M8'  ,  'MSF' ,  'O1'  ,  'S4' ] 
 
-        XY = read_pli(pli)
+        XY = utils.read_pli(pli)
 
         self.pli = pli
         self.X = XY[:,0]
@@ -58,7 +58,7 @@ class Tide(object):
 
 
     def write_ext(self):
-        name = os.path.split(self.pli)[1][:find_last(os.path.split(self.pli)[1],'.')-1]
+        name = os.path.split(self.pli)[1][:utils.find_last(os.path.split(self.pli)[1],'.')-1]
         with open(os.path.join(self.out, '%s.ext' % name),'w') as ext:
             ext.write('[boundary]\n')
             ext.write('quantity=waterlevelbnd\n')
@@ -76,11 +76,11 @@ class Tide(object):
         self.write_ext()
         self.interp_tide()
 
-        name = os.path.split(self.pli)[1][:find_last(os.path.split(self.pli)[1],'.')-1]
+        name = os.path.split(self.pli)[1][:utils.find_last(os.path.split(self.pli)[1],'.')-1]
 
         with open( os.path.join(self.out,'tide_%s.bc' % name), 'w') as bnd:
             for ss in range(0,len(self.X)):
-                zz = make_len(ss+1, 4)
+                zz = utils.make_len(ss+1, 4)
                 bnd.write('[forcing]\n')
                 bnd.write('Name = %s_%s\n' % (name,zz))
                 bnd.write('Function = astronomic\n')
