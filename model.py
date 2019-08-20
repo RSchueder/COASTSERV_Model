@@ -47,6 +47,7 @@ class Model(object):
         self.simultaneous = simultaneous
         self.search = 3
         # to remove need to write self. in all of the functions that were previously not part of this class
+        # not elegant but easier to implement
         self.make_boundary(self.ext, self.data_list, self.sub, self.tref, self.dir)
 
     def make_boundary(self, ext, data_list, subs, tref_model, model_dir, grid = None):
@@ -226,12 +227,12 @@ class Model(object):
                 for sub in subs:
                     if sub in usefor.keys():
                         # modules
-                        self.write_bcfile(sub, usefor, data_list, boundaries, bnd, tref_model, model_dir)
+                        self.write_bc_file(sub, usefor, data_list, boundaries, bnd, tref_model, model_dir)
                     else:
                         print('WARNING: requested sub %s not in CMEMS dict, no boundary made!' % sub)
 
 
-    def write_bcfile(self, sub, usefor, data_list, boundaries, bnd, tref_model, out_dir):
+    def write_bc_file(self, sub, usefor, data_list, boundaries, bnd, tref_model, out_dir):
         '''
         write the bc file for a single sub, calling preamble function and writing values at all depths for all times
         '''
@@ -246,7 +247,7 @@ class Model(object):
             print('variable = %s (called %s in CMEMS) skipped' % (sub, csub['substance']))
 
         else:
-            with open('%s%s_%s.bc' % (out_dir, sub, bnd),'w') as bcfile:
+            with open(os.path.join(out_dir, '%s_%s.bc' % (sub, bnd)),'w') as bcfile:
 
                 # get depths from first file rather than from every file
                 # this is necessary to write preamble
@@ -663,7 +664,7 @@ class Model(object):
                     if sub in usefor.keys():
                         # create a pli for every substance based on this existing pli
 
-                        with open(model_dir + '%s%s.pli' % (bnd,sub) ,'w') as pli:
+                        with open(os.path.join(model_dir,'%s%s.pli' % (bnd,sub)) ,'w') as pli:
                             # copy the existing pli but put the substance in the name
                             with open(boundaries[bnd][pli_loc_key],'r') as bndFile:
                                 lines = bndFile.readlines()
@@ -674,7 +675,7 @@ class Model(object):
                 # file_name = boundaries[bnd][pli_loc_key][find_last(boundaries[bnd][pli_loc_key],'\\'):]
                 file_name = os.path.split(boundaries[bnd][pli_loc_key])[1]
                 try:
-                    sh.copyfile(boundaries[bnd][pli_loc_key], model_dir + file_name)
+                    sh.copyfile(boundaries[bnd][pli_loc_key], os.path.join(model_dir, file_name))
                 except(sh.SameFileError):
                     print('file ' + model_dir + file_name + ' already exists, ignoring...')
 
@@ -683,7 +684,6 @@ class Model(object):
         """
         WRITE NEW EXT FILE CONTAINING THE CONSTITUENT BOUNDARIES
 
-        
         Arguments:
             ext {[type]} -- [description]
             model_dir {[type]} -- [description]
@@ -696,11 +696,11 @@ class Model(object):
         """
 
         with open(ext,'r') as new_template:
-            with open(model_dir + 'DFMWAQ.ext','w') as new_ext:
-                # copy old boundaries
-                for line in new_template.readlines():
-                    new_ext.write(line)
-                for ind, bnd in enumerate(boundaries.keys()):
+            for ind, bnd in enumerate(boundaries.keys()):
+                with open(os.path.join(model_dir,'DFMWAQ_' + bnd + '_tmp.ext'),'w') as new_ext:
+                    # copy old boundaries, should only be waterlevel
+                    for line in new_template.readlines():
+                        new_ext.write(line)
                     if 'waterlevelbnd' in boundaries[bnd]['type']:
                         new_ext.write('\n')
                         # if it is waterlevel then it was involved in the previous steps
@@ -758,6 +758,23 @@ class Model(object):
                         print('domain polygon not written')
                 else:
                     print('Cannot make WAQ initials, no grid file passed')
+
+    def merge_ext(self):
+        '''
+        write final ext file by merging temporary ones
+        '''
+        with open(os.path.join(self.dir,'DFMWAQ.ext'),'w') as new_ext:
+            for tmp_ext in glob.glob(os.path.join(self.dir, '*_tmp.ext')):
+                with open(tmp_ext, 'r') as file:
+                    lines = file.readlines()
+                    for line in lines:
+                        new_ext.write(line)
+                new_ext.write('\n')
+            os.remove(tmp_ext)
+        for tmp_ext in glob.glob(os.path.join(self.dir, '*.ext')):
+            if tmp_ext != os.path.join(self.dir, 'DFMWAQ.ext'):
+                # remove tide only bnd
+                os.remove(tmp_ext)
 
 class DCSM(Model):
     def __init__(self):

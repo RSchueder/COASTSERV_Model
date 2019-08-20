@@ -59,20 +59,21 @@ class Tide(object):
 
     def write_ext(self):
         name = os.path.split(self.pli)[1][:find_last(os.path.split(self.pli)[1],'.')-1]
-        with open(self.out + '%s.ext' % name,'w') as ext:
+        with open(os.path.join(self.out, '%s.ext' % name),'w') as ext:
             ext.write('[boundary]\n')
             ext.write('quantity=waterlevelbnd\n')
             ext.write('locationfile=%s\n' % os.path.split(self.pli)[1])
             ext.write('forcingfile=tide_%s.bc\n' % name)
             try:
-                sh.copyfile(self.pli, self.out + self.pli[find_last(self.pli, '\\'):])
+                sh.copyfile(self.pli, os.path.join(self.out, os.path.split(self.pli)[1]))
             except():
                 print('It appears the *.pli file already exists next to the *.ext file, skipping copy...')
-        self.ext = self.out + '%s.ext' % name
+
+        self.ext = os.path.join(self.out,'%s.ext' % name)
 
 
     def write_tide(self):
-        self.write_ext(self.out)
+        self.write_ext()
         self.interp_tide()
 
         name = os.path.split(self.pli)[1][:find_last(os.path.split(self.pli)[1],'.')-1]

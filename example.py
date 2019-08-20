@@ -26,28 +26,30 @@ credentials = 'credentials.json'
 
 med_query = query.Query(time_vect, dataset, coords, credentials, out)
 med_query.build_query()
-med_query.send_request_linux()
+#med_query.send_request_linux()
 
 ###############################################################################
 # TIDE BOUNDARY
 ###############################################################################
 
-fes_path = os.path.join('p','1206126-nevref','Maialen','DATA','fromCornelis','FES2012','fes2012','data')
-pli      =  os.path.join(os.getcwd(), 'tests', 'Med' , 'in', 'Boundary01.pli')
-out      = os.path.join(os.getcwd(), 'tests', 'Med' , 'out')
-med_tide = tide.Tide(fes_path, coords, pli, out)
-med_tide.initiate_tide()
-
-###############################################################################
-# CONSTITUENT BOUNDARY
-###############################################################################
-
-ext = med_tide.ext
-ext = os.path.join(os.getcwd(), 'tests', 'Med' , 'out', 'Boundary01.ext')
-data_list = os.path.join(os.getcwd(), 'tests', 'Med' , 'out', 'data', '*.nc')
-
-sub        = ['salinity', 'temperature', 'uxuy', 'steric']
-tref       = datetime.datetime(2000,1,1,00,00,00)
-model_dir  = med_tide.out
-med_mod    = model.Model(ext, data_list, sub, tref, model_dir)
-med_mod.build_boundary(interp = True, simultaneous = True)
+fes_path = os.path.join('p:','1206126-nevref','Maialen','DATA','fromCornelis','FES2012','fes2012','data\\')
+for bound in ['Long','South','North']:
+    pli      =  os.path.join(os.getcwd(), 'tests', 'Med' , 'in', bound + '.pli')
+    out      = os.path.join(os.getcwd(), 'tests', 'Med' , 'out')
+    med_tide = tide.Tide(fes_path, coords, pli, out)
+    med_tide.initiate_tide()
+    
+    ###############################################################################
+    # CONSTITUENT BOUNDARY
+    ###############################################################################
+    
+    ext = med_tide.ext
+    data_list = os.path.join(os.getcwd(), 'tests', 'Med' , 'out', 'data', '*.nc')
+    
+    sub        = ['salinity', 'temperature', 'uxuy', 'steric']
+    tref       = datetime.datetime(2017,5,15,00,00,00)
+    model_dir  = med_tide.out
+    med_mod    = model.Model(ext, data_list, sub, tref, model_dir)
+    med_mod.build_boundary(interp = True, simultaneous = True)
+    
+med_mod.merge_ext()
