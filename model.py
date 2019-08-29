@@ -328,7 +328,7 @@ class Model(object):
                         data[part_sub][t_index:t_index+len(times), :] = arr
 
                     et = datetime.datetime.now()
-                    print(part_sub + ' multiple interpolation took ' + str((et - st).seconds) + ' seconds on time block ' + str(file_index + 1) + '/' + str(len(data_list[part_sub_i])))
+                    print(part_sub + ' multiple interpolation took ' + str((et - st).seconds) + ' seconds on time chunk ' + str(file_index + 1) + '/' + str(len(data_list[part_sub_i])))
 
                 else:
                     # interpolate point by point using subset of neighbours
@@ -352,7 +352,7 @@ class Model(object):
                             data[part_sub][t_index:t_index+len(times), position] = arr                          
                         
                         et = datetime.datetime.now()
-                        print(part_sub + ' position ' + str(position) + ' read took ' + str((et - st).seconds) + ' seconds on time block ' + str(file_index + 1) + '/' + str(len(data_list[part_sub_i])))
+                        print(part_sub + ' position ' + str(position) + ' read took ' + str((et - st).seconds) + ' seconds on time chunk ' + str(file_index + 1) + '/' + str(len(data_list[part_sub_i])))
 
         return meta['times'], depths, data, fill
 
@@ -761,28 +761,39 @@ class Model(object):
 
 class DCSM(Model):
     def __init__(self):
-        ext = r'd:\projects\DWAQ_CMEMS\tests\DCSM\in\A07_new.ext'
-        data_list = r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc'
+        ext = r'd:\projects\COASTSERV_Model\tests\DCSM\in\A07_new.ext'
+        data_list = r'd:\projects\COASTSERV_Model\CMEMS_download\data\*.nc'
         sub = ['salinity', 'temperature', 'uxuy', 'steric']
         tref = datetime.datetime(2011,12,22,00,00,00)
-        model_dir = 'd:\\projects\\DWAQ_CMEMS\\tests\\DCSM\\out\\'
+        model_dir = 'd:\\projects\\COASTSERV_Model\\tests\\DCSM\\out\\'
         super().__init__(ext, data_list, sub, tref, model_dir)
 
 
 class Guayaquil(Model):
     def __init__(self):
-        ext = r'd:\projects\DWAQ_CMEMS\tests\Guayaquil\in\sea_riv_boundary_local_bc.ext'
-        data_list = r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc'
-        sub = r'd:\projects\DWAQ_CMEMS\tests\Guayaquil\in\guayas_V9.sub'
+        ext = r'd:\projects\COASTSERV_Model\tests\Guayaquil\in\sea_riv_boundary_local_bc.ext'
+        data_list = r'd:\projects\COASTSERV_Model\CMEMS_download\data\*.nc'
+        sub = r'd:\projects\COASTSERV_Model\tests\Guayaquil\in\guayas_V9.sub'
         tref = datetime.datetime(2000,1,1,00,00,00)
-        model_dir = 'd:\\projects\\DWAQ_CMEMS\\tests\\Guayaquil\\out\\'
+        model_dir = 'd:\\projects\\COASTSERV_Model\\tests\\Guayaquil\\out\\'
         super().__init__(ext, data_list, sub, tref, model_dir)
+
 
 class Med(Model):
     def __init__(self):
-        ext = r'd:\projects\DWAQ_CMEMS\tests\Guayaquil\in\sea_riv_boundary_local_bc.ext'
-        data_list = r'd:\projects\DWAQ_CMEMS\CMEMS_download\data\*.nc'
-        sub = r'd:\projects\DWAQ_CMEMS\tests\Guayaquil\in\guayas_V9.sub'
-        tref = datetime.datetime(2000,1,1,00,00,00)
-        model_dir = 'd:\\projects\\DWAQ_CMEMS\\tests\\Guayaquil\\out\\'
+        ext = r'd:\projects\COASTSERV_Model\tests\Med\out\Long.ext'
+        data_list = r'd:\projects\COASTSERV_Model\tests\Med\out\data\*.nc'
+        sub = ['salinity', 'temperature', 'uxuy', 'steric']
+        tref = datetime.datetime(2017,5,15,00,00,00)
+        model_dir = 'd:\\projects\\COASTSERV_Model\\tests\\Med\\out\\'
+        super().__init__(ext, data_list, sub, tref, model_dir)
+
+
+class HK(Model):
+    def __init__(self):
+        ext = r'd:\projects\COASTSERV_Model\tests\HK\out\south_bnd_20190125.ext'
+        data_list = r'd:\projects\COASTSERV_Model\tests\HK\out\data\*.nc'
+        sub = ['salinity', 'temperature', 'uxuy', 'steric']
+        tref = datetime.datetime(2016,1,1,00,00,00)
+        model_dir = 'd:\\projects\\COASTSERV_Model\\tests\\HK\\out\\'
         super().__init__(ext, data_list, sub, tref, model_dir)

@@ -50,7 +50,7 @@ class Tide(object):
             self.representative = None
               
 
-    def initiate_tide(self):
+    def build_tide(self):
         if self.representative is not None:
             self.write_tide()
         else:
@@ -232,7 +232,7 @@ class DCSM(Tide):
         path = 'p:\\1206126-nevref\\Maialen\\DATA\\fromCornelis\\FES2012\\fes2012\\data\\'
         coords = [-16, 16, 40, 65]
         pli = r'p:\11202221-0004-dcsm-fm\models\model_input\bnd_cond\wl\FES2012\20181108\OB_all_20181108.pli'
-        out =  'd:\\projects\\DWAQ_CMEMS\\tests\\DCSM\\out\\'
+        out =  'd:\\projects\\COASTSERV_Model\\tests\\DCSM\\out\\'
         super().__init__(path, coords, pli, out)
 
 
@@ -240,6 +240,24 @@ class Guayaquil(Tide):
     def __init__(self):
         path = 'p:\\1206126-nevref\\Maialen\\DATA\\fromCornelis\\FES2012\\fes2012\\data\\'
         coords = [-85, -75, -5, 1]
-        pli =  r'd:\projects\DWAQ_CMEMS\tests\Guayaquil\in\sea_boundary.pli'
-        out = 'd:\\projects\\DWAQ_CMEMS\\tests\\Guayaquil\\out\\'
+        pli =  r'd:\projects\COASTSERV_Model\tests\Guayaquil\in\sea_boundary.pli'
+        out = 'd:\\projects\\COASTSERV_Model\\tests\\Guayaquil\\out\\'
+        super().__init__(path, coords, pli, out)
+
+
+class Med(Tide):
+    def __init__(self):
+        path = 'p:\\1206126-nevref\\Maialen\\DATA\\fromCornelis\\FES2012\\fes2012\\data\\'
+        coords = [0, 2, 39, 42]
+        pli =  r'd:\projects\COASTSERV_Model\tests\Med\in\Long.pli'
+        out = 'd:\\projects\\COASTSERV_Model\\tests\\Med\\out\\'
+        super().__init__(path, coords, pli, out)
+
+
+class HK(Tide):
+    def __init__(self):
+        path = 'p:\\1206126-nevref\\Maialen\\DATA\\fromCornelis\\FES2012\\fes2012\\data\\'
+        coords = [105, 125, 17, 27]
+        pli =  r'd:\projects\COASTSERV_Model\tests\HK\in\south_bnd_20190125.pli'
+        out = 'd:\\projects\\COASTSERV_Model\\tests\\HK\\out\\'
         super().__init__(path, coords, pli, out)

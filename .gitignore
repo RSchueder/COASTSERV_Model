@@ -1,6 +1,15 @@
+/__pycache__/*
 *.pyc
+
+/venv/*
+
+# credentials
 *.json
+
+# downloaded data
 *.nc
+
+# model info
 *.dia
 *.xyz
 *.out

@@ -1,7 +1,14 @@
-
 import query
 
-test1 = query.DCSM()
-test2 = query.Guayaquil()                 
-test1.initiate_query()
-test2.initiate_query()
+#test = query.DCSM('physchem')
+#test = query.Guayaquil('physchem')
+test = query.Med('physchem')
+#test = query.HK('physchem')                 
+
+test.build_query()
+test.send_request_windows()
+
+#test = query.HK('bio')                 
+
+#test.build_query()
+#test.send_request_windows()

@@ -67,9 +67,24 @@ def datetime_to_timestring(dt):
     return str(dt.year) + '-' + make_len(dt.month, 2) + '-' + make_len(dt.day, 2) + ' ' + make_len(dt.hour, 2) + ':00:00'
 
 
+def row2array(line):
+    '''
+    takes a string of space seperated floats and returns an array
+    '''
+    line = line.split(' ')
+    arr = []
+    for ch in line:
+        try:
+            val = float(ch)
+            arr.append(val)
+        except:
+            pass
+    return np.array(arr)
+    
+
 def read_pli(var):
     '''
-    reads a pli boundary
+    reads a pli boundary into an array
     '''
     with open(var) as plifile:
         lines = plifile.readlines()
@@ -77,13 +92,9 @@ def read_pli(var):
         Y = []
         for ind, row in enumerate(lines):
             if '.' in row:
-                line = row.split(' ')
-                try:
-                    X.append(float(line[0]))
-                    Y.append(float(line[2]))
-                except(ValueError):
-                    X.append(float(line[1]))
-                    Y.append(float(line[3]))
+                line = row2array(row)
+                X.append(float(line[0]))
+                Y.append(float(line[1]))
     return np.array([X, Y]).T
 
 

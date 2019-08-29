@@ -107,7 +107,7 @@ class Query(object):
                             elif arg == 'date-max':
                                 bat.write('--date-max "' + str(times[tt][1]) + '" ')
                             elif arg == 'out-name':
-                                bat.write('--out-name ' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc')
+                                bat.write('--out-name ' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc ')
                             else:
                                 bat.write('--%s %s ' % (arg, args[arg]))
                     bat.write('\n timeout 10 \n')
@@ -169,27 +169,35 @@ class Query(object):
         """
         print('sending request via *.bat file')
         print(self.bat)
+        path = os.getcwd()
+        os.chdir(os.path.split(self.bat)[0])
         os.system(self.bat)
         print('request processing finished')
-
+        os.chdir(path)
 
     def send_request_linux(self):
         """
         runs the created shell script
         """
         print('sending request via *.sh file')
+        print('WARNING: will not work if sudo python environment variables are not the same as user')
+        path = os.getcwd()
+
         print(self.sh)
+
         os.system('chmod 777 ' + self.sh)
         # will not work if sudo python environment variables are not the same as user
+        os.chdir(os.path.split(self.bat)[0])
+
         os.system('sudo ' + self.sh)
         print('request processing finished')
 
+        os.chdir(path)
 
 class DCSM(Query):
-    def __init__(self):
+    def __init__(self, dataset):
         time_vect   = {'t_start' : '2012-01-01 12:00:00',
                       't_end'   : '2013-01-01 12:00:00'}
-        dataset     = 'physchem'
         coords      = [-16,16,40,65]
         credentials = 'credentials.json'
         out         = os.path.join(os.getcwd(), 'tests','DCSM','out')
@@ -197,11 +205,30 @@ class DCSM(Query):
 
 
 class Guayaquil(Query):
-    def __init__(self):
+    def __init__(self, dataset):
         time_vect   = {'t_start' : '2000-01-01 12:00:00',
                       't_end'   : '2002-01-01 12:00:00'}
-        dataset     = 'bio'
         coords      = [-85, -75, -5, 1]
         credentials = 'credentials.json'
         out         = os.path.join(os.getcwd(), 'tests','Guayaquil','out')
+        super().__init__(time_vect, dataset, coords, credentials, out)
+
+
+class Med(Query):
+    def __init__(self, dataset):
+        time_vect   = {'t_start' : '2017-05-15 12:00:00',
+                       't_end'   : '2017-09-15 12:00:00'}
+        coords = [0, 2, 39, 42]
+        credentials = 'credentials.json'
+        out         = os.path.join(os.getcwd(), 'tests','Med','out')
+        super().__init__(time_vect, dataset, coords, credentials, out)
+        
+
+class HK(Query):
+    def __init__(self, dataset):
+        time_vect   = {'t_start' : '2016-01-01 12:00:00',
+                       't_end'   : '2017-01-01 12:00:00'}
+        coords = [105, 125, 17, 27]
+        credentials = 'credentials.json'
+        out         = os.path.join(os.getcwd(), 'tests','HK','out')
         super().__init__(time_vect, dataset, coords, credentials, out)
