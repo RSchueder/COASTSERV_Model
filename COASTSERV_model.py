@@ -27,12 +27,13 @@ credentials = 'credentials.json'
 dataset    = 'physchem'
 mod_query = query.Query(time_vect, dataset, coords, credentials, out)
 mod_query.build_query()
-mod_query.send_request_windows()
+mod_query.send_request()
+
 
 dataset    = 'bio'
 mod_query = query.Query(time_vect, dataset, coords, credentials, out)   
 mod_query.build_query()
-mod_query.send_request_windows()
+mod_query.send_request()
 
 fes_path = os.path.join(os.getcwd(), 'tide')
 

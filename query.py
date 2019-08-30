@@ -164,6 +164,13 @@ class Query(object):
         print('finished writing query')
     
 
+    def send_request(self):
+        if sys.platform == 'linux':
+            self.send_request_linux()
+        else:
+            self.send_request_windows()
+
+
     def send_request_windows(self):
         """
         runs the created batch file
