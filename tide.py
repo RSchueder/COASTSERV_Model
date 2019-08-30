@@ -44,10 +44,11 @@ class Tide(object):
         self.out = out    
 
         try:
-            self.representative = glob.glob(self.path + '*SLEV.nc')[0]
+            self.representative = glob.glob(os.path.join(self.path, '*SLEV.nc'))[0]
         except(IndexError):
             print('ERROR: NO DATA FOUND IN FES PATH, NOT VALID TIDE OBJECT')
             self.representative = None
+            raise
               
 
     def build_tide(self):
@@ -146,7 +147,7 @@ class Tide(object):
 
         for ii, c in enumerate(self.const):
             print('tidal constituent %s' % c)
-            dat = nc.Dataset(self.path + '%s_FES2012_SLEV.nc' % c)
+            dat = nc.Dataset(os.path.join(self.path, '%s_FES2012_SLEV.nc' % c))
             if downsize:
                 if x_min > x_max:
                     # goes through prime meridian

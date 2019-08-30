@@ -7,9 +7,15 @@
 *.json
 
 # downloaded data
+#/in/*
+#/out/*
 *.nc
+*.ini
+*.am
+*.in
 
 # model info
+*.bc
 *.dia
 *.xyz
 *.out

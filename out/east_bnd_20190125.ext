@@ -1,0 +1,4 @@
+[boundary]
+quantity=waterlevelbnd
+locationfile=east_bnd_20190125.pli
+forcingfile=tide_east_bnd_20190125.bc

@@ -80,7 +80,7 @@ class Query(object):
                 'depth-min'    : '0.493', 
                 'depth-max'    : '5727.918000000001', 
                 'variable'     : None, 
-                'out-dir'      : '"data\"', 
+                'out-dir'      : '"data"', 
                 'out-name'     : None, 
                 'user'         : user, 
                 'pwd'          : pwd}
@@ -111,8 +111,9 @@ class Query(object):
                             else:
                                 bat.write('--%s %s ' % (arg, args[arg]))
                     bat.write('\n timeout 10 \n')
+
         ###############################################################################
-        # LINUX - EXPERIMENTAL
+        # LINUX 
         ###############################################################################
         
         self.sh = os.path.join(out, 'CMEMS_download_%s.sh' % dataset)
@@ -134,7 +135,7 @@ class Query(object):
                             else:
                                 shell.write('--%s %s ' % (arg, args[arg]))
                     
-                    out_name = args['out-dir'].replace('"','').replace('\\','/') + '/' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc'        
+                    out_name = os.path.join(args['out-dir'].replace('"',''), sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc')        
                     
                     # test for success of download - EXPERIMENTAL
                     shell.write('\n')
