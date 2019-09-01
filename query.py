@@ -190,7 +190,8 @@ class Query(object):
         # will not work if sudo python environment variables are not the same as user
         os.chdir(os.path.split(self.bat)[0])
 
-        os.system('sudo ' + self.sh)
+        #os.system('sudo ' + self.sh)
+        os.system(self.sh)
         print('request processing finished')
 
         os.chdir(path)
