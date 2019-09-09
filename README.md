@@ -3,8 +3,7 @@ A program for nesting coastal DFM and DFMWAQ models in FES tide model output and
 Designed as a backend for a webapp.
 
 # Prerequisites
-* see requirements.txt
-* some requirements are derived from having installed pylint. Not all are stricly necessary.
+* see requirements.txt. Some requirements are derived from having installed pylint. Not all are stricly necessary.
 
 **other requirements:**
 * python must be in PATH environment variable
@@ -25,7 +24,7 @@ These are expected to come from a web app or manual perscription that are fed in
 
 **constructs astronomical constituent boundaries for coastal tidal waterlevels**
 * Constructed using a pli file, a FES data path,  a bounding box, and an output path
-* Tide.build_tide() produces an *.ext file and the waterlevel *.bc file
+* Tide.build_tide() produces an .ext file and the waterlevel .bc file
 * See subclasses for examples of constructor parameters
 
 **Class : model = Model(ext, data_list, sub, tref, model_dir)**
@@ -37,11 +36,14 @@ These are expected to come from a web app or manual perscription that are fed in
 * see the dictionary usefor in units.py for implemented constituents
 
 # Example of usage
-* see example.py
+* run COASTSERV_Model.py with the correct credentials.json and input.json. The contents of these files should be:
+* **credentials.json** -> {"user" : "" , "pwd" : ""}
+* **input.json** -> {"time_vect"  : {"t_start" : "2012-01-01 12:00:00", "t_end" : "2012-02-01 12:00:00"} , "coords" :  [-16,16,40,65], "tref" :"2011,12,21,00,00,00", "subfile" : "subfile.sub"}
+* see example.py for non-json version
 
 # To-do
-* River loads based on Emilio Mayorga et al., (2010). Currently we do not have access to this data,
+* River loads based on Emilio Mayorga et al., (2010). Currently we do not have access to this data.
 
 # Known issues
-* The method Query.send_request_linux() will not work on some computers if the sudo python environment is not configured correctly. The script can be run manually however.
+* The use of the water level (steric) correction is still not verified conceptually and should be used with care.
 
