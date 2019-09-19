@@ -159,6 +159,10 @@ class Tide(object):
             else:    
                 FES_amp = dat.variables['Ha'][:,:]
                 FES_pha = dat.variables['Hg'][:,:]
+            
+            if len(FES_amp) == 0:
+                print('ERROR: No data. Is xmin < xmax and ymin < ymax?')
+                raise ValueError
 
             AMP_keep = FES_amp
             PHA_keep = FES_pha
@@ -262,3 +266,4 @@ class HK(Tide):
         pli =  r'd:\projects\COASTSERV_Model\tests\HK\in\south_bnd_20190125.pli'
         out = 'd:\\projects\\COASTSERV_Model\\tests\\HK\\out\\'
         super().__init__(path, coords, pli, out)
+

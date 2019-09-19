@@ -38,7 +38,7 @@ These are expected to come from a web app or manual perscription that are fed in
 # Example of usage
 * run COASTSERV_Model.py with the correct credentials.json and input.json. The contents of these files should be:
 * **credentials.json** -> {"user" : "" , "pwd" : ""}
-* **input.json** -> {"time_vect"  : {"t_start" : "2012-01-01 12:00:00", "t_end" : "2012-02-01 12:00:00"} , "coords" :  [-16,16,40,65], "tref" :"2011,12,21,00,00,00", "subfile" : "subfile.sub"}
+* **input.json** -> {"time_vect"  : {"t_start" : "2012-01-01 12:00:00", "t_end" : "2012-02-01 12:00:00"} , "coords" :  [-16,16,40,65],     "tref"      : "2011-12-21 00:00:00", "subfile" : "subfile.sub"}
 * see example.py for non-json version
 
 # To-do
@@ -46,4 +46,5 @@ These are expected to come from a web app or manual perscription that are fed in
 
 # Known issues
 * The use of the water level (steric) correction is still not verified conceptually and should be used with care.
+* BLOOM models are not yet supported
 

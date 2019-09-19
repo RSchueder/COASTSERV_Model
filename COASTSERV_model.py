@@ -1,10 +1,10 @@
-import datetime
 import glob
 import os
 import tide
 import query
 import model
 import json
+import pandas as pd
 
 ###############################################################################
 # DATA QUERY
@@ -54,7 +54,7 @@ for pli in glob.glob(os.path.join(os.getcwd(), 'in', '*.pl*')):
     data_list = os.path.join(out, 'data', '*.nc')
     
     sub        = ['salinity', 'temperature', 'uxuy', 'steric']
-    tref       = datetime.datetime(args['tref'])
+    tref       = pd.Timestamp(args['tref']).to_pydatetime()
     model_dir  = mod_tide.out
     mod   = model.Model(ext, data_list, sub, tref, model_dir)
     mod.build_boundary(interp = True, simultaneous = True)

@@ -557,7 +557,7 @@ class Model(object):
             inter = RegularGridInterpolator((times, depths, y, x), arr_t, fill_value=np.nan)
             arr = inter(xii)
             # reravel, 
-            # # the query point wa created times -> depths -> y -> x, 
+            # the query point wa created times -> depths -> y -> x, 
             # so a C reshape specifying the first 2 dimensions should
             # cause each entry to vary in space (x, y)
             arr_t = arr.reshape(len(times), len(depths), -1)

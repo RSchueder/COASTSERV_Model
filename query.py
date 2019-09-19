@@ -49,7 +49,9 @@ class Query(object):
         '''
 
         # quarter of a year is a good size based on trial and error, but this depends on the extent!
-        max_time = np.ceil(365/4)
+        # changed to 30 days based on communication with CMEMS
+        #max_time = np.ceil(365/4)
+        max_time = 30
         tot_time = pd.Timestamp(time_vect['t_end']) - pd.Timestamp(time_vect['t_start'])
         num_time_intervals = np.ceil(tot_time.days / max_time)
 
@@ -68,7 +70,7 @@ class Query(object):
 
         subs = all_subs[dataset]
 
-        args = {'motu'         : 'http://my.cmems-du.eu/motu-web/Motu', 
+        self.args = {'motu'         : 'http://my.cmems-du.eu/motu-web/Motu', 
                 'service-id'   : datasets[dataset][0], 
                 'product-id'   : datasets[dataset][1], 
                 'longitude-min': coords[0], 
@@ -85,36 +87,36 @@ class Query(object):
                 'user'         : user, 
                 'pwd'          : pwd}
 
-        if not os.path.exists(os.path.join(out, args['out-dir'].replace('"',''))):
-            os.mkdir(os.path.join(out, args['out-dir'].replace('"','')))
+        if not os.path.exists(os.path.join(out, self.args['out-dir'].replace('"',''))):
+            os.mkdir(os.path.join(out, self.args['out-dir'].replace('"','')))
         
-        ###############################################################################
-        # WINDOWS
-        ###############################################################################
         print('writing query')
+
+        # WINDOWS
 
         self.bat = os.path.join(out, 'CMEMS_download_%s.bat' % dataset)
 
         with open(self.bat, 'w') as bat:
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
-                    bat.write('python -m motuclient ')
-                    for arg in args.keys():
-                            if arg == 'variable':
-                                bat.write('--variable ' + sub + ' ')
-                            elif arg == 'date-min':
-                                bat.write('--date-min "' + str(times[tt][0]) + '" ')
-                            elif arg == 'date-max':
-                                bat.write('--date-max "' + str(times[tt][1]) + '" ')
-                            elif arg == 'out-name':
-                                bat.write('--out-name ' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc ')
-                            else:
-                                bat.write('--%s %s ' % (arg, args[arg]))
-                    bat.write('\n timeout 10 \n')
+                    out_name = os.path.join(self.args['out-dir'].replace('"',''), sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc')        
+                    file_name = sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc'
 
-        ###############################################################################
+                    self.write_request(bat, sub, times, tt, out_name)
+
+                    bat.write('\n')
+                    bat.write('echo "download failed, giving the server a break..."\n')
+                    bat.write('timeout 10\n')
+                    bat.write(':chkretry\n')
+                    bat.write('if not exist %s ( \n' % (os.path.join(os.getcwd(), out, out_name)))
+                    bat.write('  ')
+                    
+                    self.write_request(bat, sub, times, tt, file_name)
+                    
+                    bat.write('\n  goto chkretry \n')
+                    bat.write('  ) \n')
+                  
         # LINUX 
-        ###############################################################################
         
         self.sh = os.path.join(out, 'CMEMS_download_%s.sh' % dataset)
 
@@ -122,22 +124,11 @@ class Query(object):
             shell.write('#!/bin/bash\n')
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
-                    shell.write('python -m motuclient ')
-                    for arg in args.keys():
-                            if arg == 'variable':
-                                shell.write('--variable ' + sub + ' ')
-                            elif arg == 'date-min':
-                                shell.write('--date-min ' + str(times[tt][0]) + ' ')
-                            elif arg == 'date-max':
-                                shell.write('--date-max ' + str(times[tt][1]) + ' ')
-                            elif arg == 'out-name':
-                                shell.write('--out-name ' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc ')
-                            else:
-                                shell.write('--%s %s ' % (arg, args[arg]))
+                    out_name = os.path.join(self.args['out-dir'].replace('"',''), sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc')        
+                    file_name = sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc' 
+
+                    self.write_request(shell, sub, times, tt, out_name)    
                     
-                    out_name = os.path.join(args['out-dir'].replace('"',''), sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc')        
-                    
-                    # test for success of download - EXPERIMENTAL
                     shell.write('\n')
                     shell.write('if [ ! -f "%s" ]; then\n' % (os.path.join(os.getcwd(), out, out_name)))
                     shell.write('   while (( ! -f "%s" ))\n' % (os.path.join(os.getcwd(), out, out_name)))
@@ -145,24 +136,30 @@ class Query(object):
                     shell.write('       echo "ERROR: download failed on server end, retrying..."\n')
                     shell.write('       echo "giving the server a break..."\n')
                     shell.write('       sleep 10s\n')
-                    shell.write('       python -m motuclient ')
-                    for arg in args.keys():
-                            if arg == 'variable':
-                                shell.write('--variable ' + sub + ' ')
-                            elif arg == 'date-min':
-                                shell.write('--date-min ' + str(times[tt][0]) + ' ')
-                            elif arg == 'date-max':
-                                shell.write('--date-max ' + str(times[tt][1]) + ' ')
-                            elif arg == 'out-name':
-                                shell.write('--out-name ' + sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc ')
-                            else:
-                                shell.write('--%s %s ' % (arg, args[arg]))
+
+                    self.write_request(shell, sub, times, tt, file_name)
+                    
                     shell.write('\n')
                     shell.write('   done\n')
                     shell.write('fi\n')                
 
         print('finished writing query')
     
+
+    def write_request(self, bat, sub, times, tt, out_name):
+        bat.write('python -m motuclient ')
+        for arg in self.args.keys():
+                if arg == 'variable':
+                    bat.write('--variable ' + sub + ' ')
+                elif arg == 'date-min':
+                    bat.write('--date-min "' + str(times[tt][0]) + '" ')
+                elif arg == 'date-max':
+                    bat.write('--date-max "' + str(times[tt][1]) + '" ')
+                elif arg == 'out-name':
+                    bat.write('--out-name ' + out_name + ' ')
+                else:
+                    bat.write('--%s %s ' % (arg, self.args[arg]))
+
 
     def send_request(self):
         if sys.platform == 'linux':
@@ -183,6 +180,7 @@ class Query(object):
         print('request processing finished')
         os.chdir(path)
 
+
     def send_request_linux(self):
         """
         runs the created shell script
@@ -202,6 +200,7 @@ class Query(object):
         print('request processing finished')
 
         os.chdir(path)
+
 
 class DCSM(Query):
     def __init__(self, dataset):
