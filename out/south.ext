@@ -1,0 +1,4 @@
+[boundary]
+quantity=waterlevelbnd
+locationfile=south.pli
+forcingfile=tide_south.bc

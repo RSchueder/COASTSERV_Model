@@ -250,10 +250,20 @@ class Model(object):
                         # to minutes
                         bcfile.write(str((tdiff.seconds / 60) + (tdiff.days * 1440)))
                         bcfile.write('  ')
-                        valid = -999.999
-                        #for dind, depth in enumerate(depths):
+                        # find valid fill value
+                        valid = 0.0
+                        try:
+                            val = data[part_sub][tind, :, position]
+                            good_ind = np.sum(~np.isnan(val)) - 1
+                            valid = val[good_ind]
+                        except(IndexError):
+                            # steric, no flip
+                            pass
+
+
                         # FLIP THE ARRAY?
-                        for dind, _ in enumerate(depths):
+                        #for dind, _ in enumerate(depths):
+                        for dind, _ in reversed(list(enumerate(depths))):
                             for part_sub in csub['substance']:
                                 try:
                                     val = data[part_sub][tind, dind, position]
@@ -593,7 +603,7 @@ class Model(object):
             handle.write('Time-interpolation              = linear\n')
             handle.write('Vertical position type          = zdatum\n')
             handle.write('Vertical position specification = ')
-            for dep in depth:#.flip():
+            for dep in np.flip(depth):
                 # FLIP THE ARRAY?
                 handle.write('-%.2f  ' % dep)
             handle.write('\n')
@@ -615,10 +625,11 @@ class Model(object):
                     for part_sub_i, _ in enumerate(constituent_boundary_type[sub]['type']):
                         handle.write('Quantity                        = %s\n' % constituent_boundary_type[sub]['type'][part_sub_i])
                         handle.write('Unit                            = %s\n' % constituent_boundary_type[sub]['unit'])
+                        handle.write('Vertical position               = %s\n' % str(dep + 1))
                 else:
                     handle.write('Quantity                        = tracerbnd\n')
                     handle.write('Unit                            = g/m3\n')
-                handle.write(    'Vertical position               = %s\n' % str(dep + 1))
+                    handle.write('Vertical position               = %s\n' % str(dep + 1))
         else:
             for part_sub_i, _ in enumerate(constituent_boundary_type[sub]['type']):
                 handle.write('Quantity                        = %s\n' % constituent_boundary_type[sub]['type'][part_sub_i])
@@ -691,7 +702,11 @@ class Model(object):
                             if sub in usefor.keys():
                                 new_ext.write('[boundary]\n')
                                 if sub in constituent_boundary_type.keys():
-                                    new_ext.write('quantity=%s\n' % ','.join(constituent_boundary_type[sub]['type']).replace(',',''))
+                                    if sub != 'uxuy':
+                                        new_ext.write('quantity=%s\n' % ','.join(constituent_boundary_type[sub]['type']).replace(',',''))
+                                    else:
+                                        # advection, inconsistent naming
+                                        new_ext.write('quantity=uxuyadvectionvelocitybnd\n')
                                 else:
                                     new_ext.write('quantity=tracerbnd%s\n' % sub)
                                 

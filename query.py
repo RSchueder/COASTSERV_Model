@@ -99,22 +99,23 @@ class Query(object):
         with open(self.bat, 'w') as bat:
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
-                    out_name = os.path.join(self.args['out-dir'].replace('"',''), sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc')        
+                    out_name = sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc'      
                     file_name = sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc'
+                    bat.write('echo "downloading %s"\n' % out_name)
 
                     self.write_request(bat, sub, times, tt, out_name)
 
                     bat.write('\n')
-                    bat.write('echo "download failed, giving the server a break..."\n')
-                    bat.write('timeout 10\n')
                     bat.write(':chkretry\n')
-                    bat.write('if not exist %s ( \n' % (os.path.join(os.getcwd(), out, out_name)))
-                    bat.write('  ')
-                    
+                    bat.write('if not exist %s ( \n' % (os.path.join(os.getcwd(), out, self.args['out-dir'].replace('"',''), out_name)))
+                    bat.write('\techo "download failed, giving the server a break..."\n')
+                    bat.write('\ttimeout 10\n')
+                    bat.write('\t')
+
                     self.write_request(bat, sub, times, tt, file_name)
-                    
-                    bat.write('\n  goto chkretry \n')
-                    bat.write('  ) \n')
+
+                    bat.write('\n\tgoto chkretry \n')
+                    bat.write('\t)\n\n')
                   
         # LINUX 
         
@@ -124,14 +125,14 @@ class Query(object):
             shell.write('#!/bin/bash\n')
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
-                    out_name = os.path.join(self.args['out-dir'].replace('"',''), sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc')        
+                    out_name = sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc'
                     file_name = sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc' 
 
                     self.write_request(shell, sub, times, tt, out_name)    
                     
                     shell.write('\n')
-                    shell.write('if [ ! -f "%s" ]; then\n' % (os.path.join(os.getcwd(), out, out_name)))
-                    shell.write('   while (( ! -f "%s" ))\n' % (os.path.join(os.getcwd(), out, out_name)))
+                    shell.write('if [ ! -f "%s" ]; then\n' % (os.path.join(os.getcwd(), out, self.args['out-dir'].replace('"',''), out_name)))
+                    shell.write('   while (( ! -f "%s" ))\n' % (os.path.join(os.getcwd(), out, self.args['out-dir'].replace('"',''), out_name)))
                     shell.write('   do\n')
                     shell.write('       echo "ERROR: download failed on server end, retrying..."\n')
                     shell.write('       echo "giving the server a break..."\n')

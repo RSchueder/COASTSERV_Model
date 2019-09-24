@@ -38,7 +38,7 @@ med_query.build_query()
 # TIDE BOUNDARY
 ###############################################################################
 
-fes_path = os.path.join('p:','1206126-nevref','Maialen','DATA','fromCornelis','FES2012','fes2012','data\\')
+fes_path = os.path.join('p:','1206126-nevref','Maialen','DATA','fromCornelis','FES2012','fes2012','data')
 for bound in ['Long','South','North']:
     # from user
     pli      =  os.path.join(os.getcwd(), 'tests', 'Med' , 'in', bound + '.pli')

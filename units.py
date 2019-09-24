@@ -26,6 +26,7 @@ usefor = {
 constituent_boundary_type = {
         'salinity'   : {'type' : ['salinitybnd']     , 'unit' : '1e-3'},
         'temperature': {'type' : ['temperaturebnd']  , 'unit' : 'degC'},
+        # quantity in ext and bc file is inconsistent, exception added in Model().write_new_ext_file()
         'uxuy'       : {'type' : ['ux', 'uy']        , 'unit' : 'm/s'},
         'steric'     : {'type' : ['waterlevelbnd']   , 'unit' : 'm'}
 } 
