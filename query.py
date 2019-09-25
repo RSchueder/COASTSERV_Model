@@ -97,6 +97,7 @@ class Query(object):
         self.bat = os.path.join(out, 'CMEMS_download_%s.bat' % dataset)
 
         with open(self.bat, 'w') as bat:
+            chk = 0
             for sub in subs:
                 for tt in range(0, int(num_time_intervals)):
                     out_name = sub + '_' + str(times[tt][0]).replace(':','-').replace(' ','_') + '_' + str(times[tt][1]).replace(':','-').replace(' ','_') + '.nc'      
@@ -106,7 +107,7 @@ class Query(object):
                     self.write_request(bat, sub, times, tt, out_name)
 
                     bat.write('\n')
-                    bat.write(':chkretry\n')
+                    bat.write(':chkretry%i\n' % chk)
                     bat.write('if not exist %s ( \n' % (os.path.join(os.getcwd(), out, self.args['out-dir'].replace('"',''), out_name)))
                     bat.write('\techo "download failed, giving the server a break..."\n')
                     bat.write('\ttimeout 10\n')
@@ -114,8 +115,9 @@ class Query(object):
 
                     self.write_request(bat, sub, times, tt, file_name)
 
-                    bat.write('\n\tgoto chkretry \n')
+                    bat.write('\n\tgoto chkretry%i \n' % chk)
                     bat.write('\t)\n\n')
+                    chk+=1
                   
         # LINUX 
         
