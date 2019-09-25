@@ -5,23 +5,18 @@ forcingfile=tide_east.bc
 
 [boundary]
 quantity=salinitybnd
-locationfile=eastsalinity.pli
+locationfile=east.pli
 forcingfile=salinity_east.bc
 
 [boundary]
 quantity=temperaturebnd
-locationfile=easttemperature.pli
+locationfile=east.pli
 forcingfile=temperature_east.bc
 
 [boundary]
 quantity=uxuyadvectionvelocitybnd
-locationfile=eastuxuy.pli
-forcingfile=uxuy_east.bc
-
-[boundary]
-quantity=waterlevelbnd
 locationfile=east.pli
-forcingfile=steric_east.bc
+forcingfile=uxuy_east.bc
 
 
 [boundary]
@@ -31,23 +26,18 @@ forcingfile=tide_north.bc
 
 [boundary]
 quantity=salinitybnd
-locationfile=northsalinity.pli
+locationfile=north.pli
 forcingfile=salinity_north.bc
 
 [boundary]
 quantity=temperaturebnd
-locationfile=northtemperature.pli
+locationfile=north.pli
 forcingfile=temperature_north.bc
 
 [boundary]
 quantity=uxuyadvectionvelocitybnd
-locationfile=northuxuy.pli
-forcingfile=uxuy_north.bc
-
-[boundary]
-quantity=waterlevelbnd
 locationfile=north.pli
-forcingfile=steric_north.bc
+forcingfile=uxuy_north.bc
 
 
 [boundary]
@@ -57,22 +47,17 @@ forcingfile=tide_south.bc
 
 [boundary]
 quantity=salinitybnd
-locationfile=southsalinity.pli
+locationfile=south.pli
 forcingfile=salinity_south.bc
 
 [boundary]
 quantity=temperaturebnd
-locationfile=southtemperature.pli
+locationfile=south.pli
 forcingfile=temperature_south.bc
 
 [boundary]
 quantity=uxuyadvectionvelocitybnd
-locationfile=southuxuy.pli
-forcingfile=uxuy_south.bc
-
-[boundary]
-quantity=waterlevelbnd
 locationfile=south.pli
-forcingfile=steric_south.bc
+forcingfile=uxuy_south.bc
 
 

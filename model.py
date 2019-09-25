@@ -34,19 +34,22 @@ class Model(object):
         self.sub_in    = sub
         self.tref      = tref
         self.dir       = model_dir
+        self.fill      = {}
 
-    def build_boundary(self, interp = False, simultaneous = False, search = 3):
+    def build_boundary(self, interp = False, simultaneous = False, search = 3, steric = True):
         """creates boundary conditions
         
         Keyword Arguments:
             interp {bool} -- if true then regular grid interpolation is conducted on 48 local cells, otherwise nearest neighbour (default: {False})
             simultaneous {bool} -- if true then all data is interpolated at the same time across entire domain(default: {False})
             search {int} -- subsection of data to use in interpolation (1/2 width of search square)
+            steric {bool} -- if true then steric boundary will be created
         """
 
         self.interp = interp
         self.simultaneous = simultaneous
-        self.search = 3
+        self.search = search
+        self.steric = steric
 
         self.make_boundary()
 
@@ -80,19 +83,17 @@ class Model(object):
         # makes a copy of the passed ext file and appends the new boundaries
         self.write_new_ext_file()
 
+        self.write_ini(grid)
+
     def check_files(self):
         """
         from the list of requested subs and the location of the files, find out
         how complete the data list is, and find one file that can be representative
-        
-        Arguments:
-            subs {str/list} -- [description]
-            usefor {dict} -- [description]
-            data_list {list} -- [description]
+        w.r.t. attributes and such
         """
 
-        count = []
-        sub_data_list = []
+        count = list()
+        sub_data_list = list()
         for sub in self.subs:
             if sub in usefor.keys():
                 csub = usefor[sub] # csub is name of sub in CMEMS nomenclature
@@ -171,11 +172,11 @@ class Model(object):
     def update_pli_loc(self, boundaries, bnd):
         """
         make sure location of pli is readable and return an array of that pli
+        and the updated boundaries, assigned to the boundaries attribute
 
         Arguments:
             boundaries {[type]} -- [description]
             bnd {[type]} -- [description]
-            ext {[type]} -- [description]
         """
 
         pli_loc_key = 'pli_loc'
@@ -184,7 +185,6 @@ class Model(object):
             pli = utils.read_pli(boundaries[bnd][pli_loc_key])
         except(FileNotFoundError):
             # could be local, so look in same folder as ext
-            # pli_dir = ext[:find_last(ext,'\\')-1]
             pli_dir = os.path.split(self.ext)[0]
             try:
                 boundaries[bnd][pli_loc_key] = os.path.join(pli_dir, boundaries[bnd][pli_loc_key])
@@ -198,7 +198,7 @@ class Model(object):
  
     def process_bc(self):
         """
-        CREATE MATRIX OF VALUES FROM CMEMS and WRITE to BC FILE FOR ALL MODEL PARAMETERS
+        wrapper for writing a bc file
         """
         boundaries = self.boundaries
 
@@ -207,7 +207,6 @@ class Model(object):
                 # waterlevel because an ocean boundary should be waterlevel
                 for sub in self.subs:
                     if sub in usefor.keys():
-                        # modules
                         self.write_bc_file(sub, bnd)
                     else:
                         print('WARNING: requested sub %s not in CMEMS dict, no boundary made!' % sub)
@@ -219,7 +218,7 @@ class Model(object):
         '''
         csub = usefor[sub] # csub is name of sub in CMEMS nomenclature
         full_data_list = self.data_list
-        data_list = []
+        data_list = list()
         for part_sub in csub['substance']:
             data_list.append([file for file in full_data_list if part_sub in file])
 
@@ -230,17 +229,17 @@ class Model(object):
         else:
             with open(os.path.join(self.dir, '%s_%s.bc' % (sub, bnd)),'w') as bcfile:
 
-                # get depths from first file rather than from every file
-                # this is necessary to write preamble
                 print('substance: %s' % sub)
                 print('reading data...')
 
+                # get depths from first file rather than from every file
+                # this is necessary to write preamble
                 times, depths, data, fill = self.read_nc_data(data_list, bnd, csub)
 
                 print('finished reading data')
                 print('writing file...')
 
-                # for every position, go through all the data files and read data at the space index
+                # for every position, go through all the data files and read data
                 for position in range(0, len(self.boundaries[bnd]['CMEMS_index'])):
 
                     self.write_bc_preamble(bcfile, bnd, position, sub, depths)
@@ -250,16 +249,8 @@ class Model(object):
                         # to minutes
                         bcfile.write(str((tdiff.seconds / 60) + (tdiff.days * 1440)))
                         bcfile.write('  ')
-                        # find valid fill value
-                        valid = 0.0
-                        try:
-                            val = data[part_sub][tind, :, position]
-                            good_ind = np.sum(~np.isnan(val)) - 1
-                            valid = val[good_ind]
-                        except(IndexError):
-                            # steric, no flip
-                            pass
-
+                        # find valid fill value, dependent on parameter and depth
+                        valid = self.find_valid_value(data, part_sub, csub, tind, position)
 
                         # FLIP THE ARRAY?
                         #for dind, _ in enumerate(depths):
@@ -271,7 +262,7 @@ class Model(object):
                                     # steric
                                     val = data[part_sub][tind, position]
 
-                                if val == fill or np.isnan(val):# or val < 0.0:
+                                if val == float(self.fill[part_sub]) or np.isnan(val):
                                     val = valid
                                 else:
                                     valid = val
@@ -287,7 +278,7 @@ class Model(object):
         '''
         reads each file belonging to a substance one by one, storing the data per position in a tensor
         this will be returned so it can be writen to a file
-        The stratey tries to reduce the number of total times nc file handles are switched
+        The strategy tries to reduce the number of total times nc file handles are switched
         the alternative strategy was to do the writing point by point, meaning each nc file would be 
         read as many times as there are support points. Now they are only read once each, with the
         data being stored for later use.
@@ -311,6 +302,7 @@ class Model(object):
                 # if 2D
                 data[part_sub] = np.zeros((len(meta['times']), len(self.boundaries[bnd]['CMEMS_index'])))
 
+        # for each constituent/part sub making up this substance
         for part_sub_i, part_sub in enumerate(csub['substance']):
             for file_index, data_file in enumerate(data_list[part_sub_i]):
                 print('reading data file ' + os.path.split(data_file)[1])
@@ -319,7 +311,7 @@ class Model(object):
                 # these are needed to determine the location in the all array for the data to be inserted
                 times = np.array([datetime.datetime(1950,1,1,0,0,0) + datetime.timedelta(hours = int(tt)) for tt in ds.variables['time'][:]])
                 
-                if self.simultaneous:
+                if self.simultaneous and self.interp:
                     # interpolate all points accross all data
                     st = datetime.datetime.now()
 
@@ -329,8 +321,8 @@ class Model(object):
                     # interpolate all locations at the same time
                     # we feed in depths and times to reducing read frequency
                     arr = self.get_interp_array_multiple(ds, part_sub, bnd, times, depths)
-                    
                     arr = arr.squeeze()
+
                     if len(meta['depths']) > 1:
                         data[part_sub][t_index:t_index+len(times), :, :] = arr
                     else:
@@ -339,6 +331,10 @@ class Model(object):
 
                     et = datetime.datetime.now()
                     print(part_sub + ' multiple interpolation took ' + str((et - st).seconds) + ' seconds on time chunk ' + str(file_index + 1) + '/' + str(len(data_list[part_sub_i])))
+                
+                elif self.simultaneous and not self.interp:
+                    print('ERROR: Cannot be simultaneous interpolation without interpolation option turned on')
+                    break
 
                 else:
                     # interpolate point by point using subset of neighbours
@@ -351,8 +347,6 @@ class Model(object):
                             arr = self.get_interp_array(ds, part_sub, bnd, position, times, depths)
                         else:
                             arr = self.get_nearest_array(ds, part_sub, bnd, position, depths)
-                            # unmask for later check
-                            arr.mask = False
                         arr = arr.squeeze()
 
                         if len(meta['depths']) > 1:
@@ -373,8 +367,8 @@ class Model(object):
         times = np.array([])
 
         # first get all times and the depth, where the associated data will be filled incrementally
+        print('It is assumed all variables in csub to make a model sub have the same file sizes and fill values')
         for file_index, data_file in enumerate(data_list[0]):
-            # it is assumed all variables in csub to make a model sub have the same file sizes
             ds = nc.Dataset(data_file, 'r')
             if file_index == 0:
                 try:
@@ -386,6 +380,10 @@ class Model(object):
             times = np.concatenate((times, file_time))
         try:
             fill = ds.variables[csub['substance'][0]]._FillValue 
+            # assign same fill value
+            for part_sub in range(0, len(csub['substance'])):
+                self.fill[csub['substance'][part_sub]] = float(fill)
+
         except(UnboundLocalError):
             print('ERROR: critical lack of files!')
             raise
@@ -396,36 +394,41 @@ class Model(object):
 
     def get_nearest_array(self, ds, part_sub, bnd, position, depths):
         '''
-            nearest neighbour interpolation using pre-calculated indices
+        nearest neighbour interpolation using pre-calculated indices
+        indices could lead you onto land
         '''
-
+        
+        #top_map = ds.variables[part_sub][0, 0, :, :]
+        #top_map.mask = False
         if len(depths) > 1:
             arr = ds.variables[part_sub][:, :, int(self.boundaries[bnd]['CMEMS_index'][position,1]), int(self.boundaries[bnd]['CMEMS_index'][position,0])]
-
+            arr = self.clean_array(arr, part_sub)
+           
         else:
             arr = ds.variables[part_sub][:, int(self.boundaries[bnd]['CMEMS_index'][position,1]), int(self.boundaries[bnd]['CMEMS_index'][position,0])]
-           
+            arr = self.clean_array(arr, part_sub)
+
         return arr
 
         
     def get_interp_array(self, ds, sub, bnd, position, times, depths):
-        """
+        """        
         returns array interpolated from local selection of data
         
         Arguments:
+            ds {netCDF4.Dataset} -- Dataset of data file to be interpolated
             sub {str} -- CMEMS style sub name
-            boundaries {dict} -- boundary dictionary
             bnd {str} -- boundary name
             position {int} -- position in pli
             times {np.array(pd.Timestamp)} -- pandas timestamp array
-            depths {np.array} -- array of depths
-            search {int} -- number of cells in search radius
+            depths {np.array()} -- array of CMEMS depths            
         """
 
-        yind = int(boundaries[bnd]['CMEMS_index'][position, 1])
-        xind = int(boundaries[bnd]['CMEMS_index'][position, 0])
-        xi = boundaries[bnd]['coords'][position, 0]
-        yi = boundaries[bnd]['coords'][position, 1]
+        xind = int(self.boundaries[bnd]['CMEMS_index'][position, 0])
+        xi = self.boundaries[bnd]['coords'][position, 0]
+        yind = int(self.boundaries[bnd]['CMEMS_index'][position, 1])
+        yi = self.boundaries[bnd]['coords'][position, 1]
+
         search = self.search
         # vectorize query points
         # TIME, DEPTH, LAT, LON
@@ -445,17 +448,18 @@ class Model(object):
                 xii[ind,:] = [tt, yi, xi]
                 ind += 1
 
-        y = ds.variables['latitude'][yind-search:yind+search+1]
         x = ds.variables['longitude'][xind-search:xind+search+1]
+        y = ds.variables['latitude'][yind-search:yind+search+1]
 
+        '''
         # TIME, DEPTH, LAT, LON
-        # take small section for the interpolation
-        # order of this being passed is the same order as you would say the dimensions
-        # this is because C reshapes will reshape backwards through the dimensions, which
-        # reflects what is happening below.
-        # nest from first down to last dimension   
-        # reshape (vectorize) the subsection of data for interpolation routine 
-        # idx = 0
+        take small section for the interpolation
+        order of this being passed is the same order as you would say the dimensions
+        this is because C reshapes will reshape backwards through the dimensions, which
+        reflects what is happening below.
+        nest from first down to last dimension   
+        reshape (vectorize) the subsection of data for interpolation routine 
+        '''
         if len(depths) > 1:
             # 3D
             try:
@@ -467,22 +471,8 @@ class Model(object):
                 return arr_t
 
             # to get caught later
-            arr_t[arr_t.mask == True] = np.nan
+            arr_t = self.clean_array(arr_t, sub)
             inter = RegularGridInterpolator((times, depths, y, x), arr_t)
-
-            # comments left for reference of other technique
-            #arrs  = np.zeros((arr_t.shape[0] * arr_t.shape[1] * arr_t.shape[2] * arr_t.shape[3], 4))
-            #V     = np.zeros((arr_t.shape[0] * arr_t.shape[1] * arr_t.shape[2] * arr_t.shape[3], 1))
-           
-            #for tt in range(0,arr_t.shape[0]):
-            #    for dd in range(0,arr_t.shape[1]):
-                    # lat
-            #        for yy in range(0,arr_t.shape[2]):
-                        # lon
-            #            for xx in range(0,arr_t.shape[3]):
-            #                arrs[idx,:] = [times[tt], z[dd], y[yy], x[xx]]
-            #                V[idx] = arr_t[tt, dd, yy, xx]
-            #                idx += 1
 
         else:
             # steric
@@ -491,30 +481,34 @@ class Model(object):
             except(IndexError):
                 print('not enough buffer space between pli and data domain. Please increase size of data domain')
                 print('resorting to nearest neigbour')
-                arr_t = self.get_nearest_array(ds, sub, boundaries, bnd, position, depths)
+                arr_t = self.get_nearest_array(ds, sub, bnd, position, depths)
                 return arr_t
 
-            arr_t[arr_t.mask == True] = np.nan
+            arr_t = self.clean_array(arr_t, sub)
             inter = RegularGridInterpolator((times, y, x), arr_t)
 
-        # V[V == 0] = np.nan
-        
-        # interpolate to single point in space from spatial subsection
-        # arr = griddata(arrs, V, xi = xii.T )
-        # inter = LinearNDInterpolator(arrs, V, fill_value=np.nan, rescale=False)
-            
+        '''
+        interpolate to single point in space from spatial subsection, old method
+        V[V == 0] = np.nan
+        arr = griddata(arrs, V, xi = xii.T )
+        inter = LinearNDInterpolator(arrs, V, fill_value=np.nan, rescale=False)
+        '''
         arr = inter(xii)
-       
-        # reravel, it went times -> depths, so go back
-        # data must be returned in times, depth, position, where position is dim 1 for single position interpolation
+        '''
+        reravel, it went times -> depths, so go back
+        data must be returned in times, depth, position, where position is dim 1 for single position interpolation
+        '''
         if len(depths) > 1:
             arr_t = arr.reshape(len(times), len(depths), -1)
         else:
             arr_t = arr.reshape(len(times), -1)
 
         if np.isnan(np.nanmean(arr)):
-            # if all data were nan, too close to the coast, so use nearest neighbour
-            # the returned shape will be as expected, so it is done after the reshape
+            '''
+            if all data were nan, too close to the coast, so use nearest neighbour
+            the returned shape will be as expected, so it is done after the reshape
+            issue arises if not nan but fill
+            '''
             arr_t = self.get_nearest_array(ds, sub, bnd, position, depths)
 
         return arr_t 
@@ -522,18 +516,19 @@ class Model(object):
 
     def get_interp_array_multiple(self, ds, sub, bnd, times, depths):
         """
-        EXPERIMENTAL    
         returns array interpolated from all data to MULTIPLE points
         pros - only one interpolation step, no loop
         cons - done with much more memory
         
         Arguments:
+            ds {netCDF4.Dataset} -- Dataset of data file to be interpolated
             sub {str} -- CMEMS style sub name
-            boundaries {dict} -- boundary dictionary
             bnd {str} -- boundary name
+            position {int} -- position in pli
             times {np.array(pd.Timestamp)} -- pandas timestamp array
-            depths {np.array} -- array of depths
-        """        
+            depths {np.array()} -- array of CMEMS depths            
+        """
+
         arr = []
         # make intergers of times
         times = [ii for ii, jj in enumerate(times)]
@@ -541,7 +536,7 @@ class Model(object):
         xi = self.boundaries[bnd]['coords'][:, 0]
         yi = self.boundaries[bnd]['coords'][:, 1]
 
-        #form query point
+        # form query point xii
         ind = 0
         if len(depths) > 1:
             xii = np.zeros((len(depths) * len(times) * len(yi), 4))
@@ -556,36 +551,44 @@ class Model(object):
                 for pos, jj in enumerate(yi):
                     xii[ind,:] = [tt, yi[pos], xi[pos]]
                     ind += 1
-
-        y = ds.variables['latitude'][:]
+        
         x = ds.variables['longitude'][:]
+        y = ds.variables['latitude'][:]
         
         if len(depths) > 1:
             # 3D
             arr_t = ds.variables[sub][:, :, :, :]  
-            arr_t[arr_t.mask == True] = np.nan
+            arr_t = self.clean_array(arr_t, sub)
+
             inter = RegularGridInterpolator((times, depths, y, x), arr_t, fill_value=np.nan)
             arr = inter(xii)
-            # reravel, 
-            # the query point wa created times -> depths -> y -> x, 
-            # so a C reshape specifying the first 2 dimensions should
-            # cause each entry to vary in space (x, y)
+            '''
+            reravel, 
+            the query point was created times -> depths -> y -> x, 
+            so a C reshape specifying the first 2 dimensions should
+            cause each entry to vary in space (x, y)
+            '''
             arr_t = arr.reshape(len(times), len(depths), -1)
             # check for nan and do nearest instead
             for position in range(0, arr_t.shape[-1]):
                 if np.isnan(np.nanmean(arr_t[:, :, position])):
+                    print('getting nearest array instead for position %i' % position)
                     arr_t[:, :, position] = self.get_nearest_array(ds, sub, bnd, position, depths)
         else:
             # steric
             arr_t = ds.variables[sub][:, :, :]
-            arr_t[arr_t.mask == True] = np.nan
+            arr_t = self.clean_array(arr_t, sub)
+
+
             inter = RegularGridInterpolator((times, y, x), arr_t, fill_value = np.nan)
             arr = inter(xii)
             # reravel, it went times -> depths, so go back
             arr_t = arr.reshape(len(times), -1)
             # check for nan and do nearest instead
             for position in range(0, arr_t.shape[-1]):
+                # will not be nan but could be fill!!!!!
                 if np.isnan(np.nanmean(arr_t[:, position])):
+                    print('getting nearest array instead for position %i' % position)
                     arr_t[:, position] = self.get_nearest_array(ds, sub, bnd, position, depths)        
 
         return arr_t 
@@ -596,9 +599,9 @@ class Model(object):
         write the header information for a bc file
         '''
         handle.write('[forcing]\n')
+        handle.write('Name                            = %s_%s\n' % (pli_name.replace('.pli',''), utils.make_len(support+1, 4)))
 
         if sub != 'steric':
-            handle.write('Name                            = %s%s_%s\n' % (pli_name.replace('.pli',''), sub, utils.make_len(support+1, 4)))
             handle.write('Function                        = t3D\n')
             handle.write('Time-interpolation              = linear\n')
             handle.write('Vertical position type          = zdatum\n')
@@ -608,7 +611,6 @@ class Model(object):
                 handle.write('-%.2f  ' % dep)
             handle.write('\n')
         else:
-            handle.write('Name                            = %s_%s\n' % (pli_name.replace('.pli',''), utils.make_len(support+1, 4)))
             handle.write('Function                        = timeseries\n')
             handle.write('Time-interpolation              = linear\n')       
 
@@ -639,12 +641,6 @@ class Model(object):
     def write_pli(self):
         """
         ADMINISTRATE ADDITIONAL PLI FILES AND ASSOCIATED NEW EXT
-
-        Arguments:
-            subs {[type]} -- [description]
-            boundaries {[type]} -- [description]
-            usefor {[type]} -- [description]
-            model_dir {[type]} -- [description]
         """
 
         pli_loc_key = 'pli_loc'
@@ -652,6 +648,8 @@ class Model(object):
 
         for _, bnd in enumerate(boundaries.keys()):
             if 'waterlevelbnd' in boundaries[bnd]['type']:
+                '''
+                # do not write a unique pli, simply copy
                 for sub in self.subs:
 
                     if sub in usefor.keys():
@@ -666,26 +664,19 @@ class Model(object):
     
                 # copy the original boundary pli as well for the hydrodynamic model
                 # file_name = boundaries[bnd][pli_loc_key][find_last(boundaries[bnd][pli_loc_key],'\\'):]
+                '''
                 file_name = os.path.split(boundaries[bnd][pli_loc_key])[1]
                 try:
                     sh.copyfile(boundaries[bnd][pli_loc_key], os.path.join(self.dir, file_name))
                 except(sh.SameFileError):
-                    print('file ' + self.dir + file_name + ' already exists, ignoring...')
+                    print('file ' + os.path.join(self.dir, file_name) + ' already exists, ignoring...')
 
 
-    def write_new_ext_file(self, grid = None):
+    def write_new_ext_file(self):
         """
         WRITE NEW EXT FILE CONTAINING THE CONSTITUENT BOUNDARIES
-
-        Arguments:
-            ext {[type]} -- [description]
-            model_dir {[type]} -- [description]
-            boundaries {[type]} -- [description]
-            subs {[type]} -- [description]
-            usefor {[type]} -- [description]
         
-        Keyword Arguments:
-            grid {[type]} -- [description] (default: {None})
+
         """
         boundaries = self.boundaries
 
@@ -700,62 +691,68 @@ class Model(object):
                         # if it is waterlevel then it was involved in the previous steps
                         for sub in self.subs:
                             if sub in usefor.keys():
-                                new_ext.write('[boundary]\n')
-                                if sub in constituent_boundary_type.keys():
-                                    if sub != 'uxuy':
-                                        new_ext.write('quantity=%s\n' % ','.join(constituent_boundary_type[sub]['type']).replace(',',''))
+                                if sub == 'steric' and not self.steric:
+                                    pass
+                                else:
+                                    new_ext.write('[boundary]\n')
+                                    if sub in constituent_boundary_type.keys():
+                                        if sub != 'uxuy':
+                                            new_ext.write('quantity=%s\n' % ','.join(constituent_boundary_type[sub]['type']).replace(',',''))
+                                        else:
+                                            # advection, inconsistent naming
+                                            new_ext.write('quantity=uxuyadvectionvelocitybnd\n')
                                     else:
-                                        # advection, inconsistent naming
-                                        new_ext.write('quantity=uxuyadvectionvelocitybnd\n')
-                                else:
-                                    new_ext.write('quantity=tracerbnd%s\n' % sub)
-                                
-                                # does steric really need to share the pli?
-                                # new_ext.write('locationfile=%s%s.pli\n' % (bnd,sub))
-                                
-                                if sub != 'steric':
-                                    new_ext.write('locationfile=%s%s.pli\n' % (bnd,sub))
-                                else:
+                                        new_ext.write('quantity=tracerbnd%s\n' % sub)
+                                                                    
                                     new_ext.write('locationfile=%s.pli\n' % (bnd))
-                                
-                                new_ext.write('forcingfile=%s_%s.bc\n' % (sub, bnd))
-                                new_ext.write('\n')
+                                    new_ext.write('forcingfile=%s_%s.bc\n' % (sub, bnd))
+                                    new_ext.write('\n')
 
-            if isinstance(self.subs, str):
-                if grid is not None:
-                    # initials go in old style file
-                    grd = nc.Dataset(grid)
-                    try:
-                        x_min = np.min(grd.variables['mesh2d_node_x'][:])
-                        x_max = np.max(grd.variables['mesh2d_node_x'][:])
-                        y_min = np.min(grd.variables['mesh2d_node_y'][:])
-                        y_max = np.max(grd.variables['mesh2d_node_y'][:])
 
-                        with open(self.dir + 'domain.pol','w') as pol:
-                            pol.write('domain\n')
-                            pol.write('4   2\n')
-                            pol.write('%.4e    %.4e\n' % (x_min, y_min))
-                            pol.write('%.4e    %.4e\n' % (x_min, y_max))
-                            pol.write('%.4e    %.4e\n' % (x_max, y_max))
-                            pol.write('%.4e    %.4e\n' % (x_max, y_min))
+    def write_ini(self, grid):
+        '''
+        write initial conditions file
 
-                        with open(self.dir + 'DFMWAQ_initials.ext','w') as old_ext:
-                            for sub in self.subs:
-                                old_ext.write('QUANTITY=initialtracer%s\n' % sub)
-                                old_ext.write('FILENAME=domain.pol\n')
-                                old_ext.write('FILETYPE=10\n')
-                                old_ext.write('METHOD=4\n')
-                                old_ext.write('OPERAND=O\n')
-                                if sub in ini.keys():
-                                    old_ext.write('VALUE=%.4e\n' % ini[sub])
-                                else:
-                                    old_ext.write('VALUE=0.0\n')
-                                old_ext.write('\n')
-                    except:
-                        print('only map4 style grids accepted')
-                        print('domain polygon not written')
-                else:
-                    print('Cannot make WAQ initials, no grid file passed')
+        Keyword Arguments:
+            grid {[type]} -- [description] (default: {None})
+        '''
+
+        if isinstance(self.subs, str):
+            if grid is not None:
+                # initials go in old style file
+                grd = nc.Dataset(grid)
+                try:
+                    x_min = np.min(grd.variables['mesh2d_node_x'][:])
+                    x_max = np.max(grd.variables['mesh2d_node_x'][:])
+                    y_min = np.min(grd.variables['mesh2d_node_y'][:])
+                    y_max = np.max(grd.variables['mesh2d_node_y'][:])
+
+                    with open(self.dir + 'domain.pol','w') as pol:
+                        pol.write('domain\n')
+                        pol.write('4   2\n')
+                        pol.write('%.4e    %.4e\n' % (x_min, y_min))
+                        pol.write('%.4e    %.4e\n' % (x_min, y_max))
+                        pol.write('%.4e    %.4e\n' % (x_max, y_max))
+                        pol.write('%.4e    %.4e\n' % (x_max, y_min))
+
+                    with open(self.dir + 'DFMWAQ_initials.ext','w') as old_ext:
+                        for sub in self.subs:
+                            old_ext.write('QUANTITY=initialtracer%s\n' % sub)
+                            old_ext.write('FILENAME=domain.pol\n')
+                            old_ext.write('FILETYPE=10\n')
+                            old_ext.write('METHOD=4\n')
+                            old_ext.write('OPERAND=O\n')
+                            if sub in ini.keys():
+                                old_ext.write('VALUE=%.4e\n' % ini[sub])
+                            else:
+                                old_ext.write('VALUE=0.0\n')
+                            old_ext.write('\n')
+                except:
+                    print('only map4 style grids accepted')
+                    print('domain polygon not written')
+            else:
+                print('Cannot make WAQ initials, no grid file passed')
+
 
     def merge_ext(self):
         '''
@@ -773,6 +770,30 @@ class Model(object):
             if tmp_ext != os.path.join(self.dir, 'DFMWAQ.ext'):
                 # remove tide only bnd
                 os.remove(tmp_ext)
+
+
+    def clean_array(self, arr, part_sub):
+        arr.mask = False
+        arr[arr == self.fill[part_sub]] = np.nan
+
+        return arr
+
+
+    def find_valid_value(self, data, part_sub, csub, tind, position):
+        try:
+            val = data[part_sub][tind, :, position]
+            good_ind = np.sum(~np.isnan(val)) - 1
+            
+            if good_ind >= 0:
+                valid = val[good_ind]
+            else:
+                valid = 0.0
+        except(IndexError):
+            # steric, no flip
+            valid = 0.0
+
+        return valid
+
 
 class DCSM(Model):
     def __init__(self):

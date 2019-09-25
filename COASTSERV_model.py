@@ -38,7 +38,6 @@ mod_query.build_query()
 fes_path = os.path.join(os.getcwd(), 'tide')
 
 for pli in glob.glob(os.path.join(os.getcwd(), 'in', '*.pl*')):
-
     ###############################################################################
     # TIDE BOUNDARY
     ###############################################################################
@@ -57,14 +56,14 @@ for pli in glob.glob(os.path.join(os.getcwd(), 'in', '*.pl*')):
     tref       = pd.Timestamp(args['tref']).to_pydatetime()
     model_dir  = mod_tide.out
     mod   = model.Model(ext, data_list, sub, tref, model_dir)
-    mod.build_boundary(interp = True, simultaneous = True)
+    mod.build_boundary(interp = True, simultaneous = True, steric = False)
     
     if os.path.exists(os.path.join(os.getcwd(), 'in', args['subfile'])):
         # ignore for now
         pass
         sub    = os.path.join(os.getcwd(), 'in', args['subfile'])
         mod    = model.Model(ext, data_list, sub, tref, model_dir)
-        mod.build_boundary(interp = True, simultaneous = True)    
+        mod.build_boundary(interp = True, simultaneous = True, steric = False)    
     else:
         print('WARNING: No sub file found, cannot create water quality model')
 
