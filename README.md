@@ -3,12 +3,22 @@ A program for nesting coastal DFM and DFMWAQ models in FES tide model output and
 Designed as a backend for a webapp.
 
 # Prerequisites
-* see requirements.txt. Some requirements are derived from having installed pylint. Not all are stricly necessary.
+* see requirements.txt. 
 
 **other requirements:**
 * python must be in PATH environment variable
 
-# Usage
+# Webapp usage
+first clone the repo, then:
+
+$ conda env create -f coastserv.yml <br>
+$ export FLASK_APP=run.py <br>
+$ cd app <br>
+$ flask run <br>
+
+Go to the local IP provided in the console and provide the necessary input. Note that $ export should be changed to $ set in windows.
+
+# Dekstop usage
 The tool workflow is designed such that the user is expected to start with a bounding box [xmin, xmax, ymin, ymax] on the globe and line segments (x,y) that they wish to define model boundaries on.
 These are expected to come from a web app or manual perscription that are fed into input.json. The bounding box is a list of floats and the line segment boundaries are ascii polygon file (referred to as a *.pli in dflowfm).
 
