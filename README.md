@@ -12,6 +12,7 @@ Designed as a backend for a webapp.
 first clone the repo, then:
 
 $ conda env create -f coastserv.yml <br>
+$ conda activate coastserv <br>
 $ export FLASK_APP=run.py <br>
 $ cd app <br>
 $ flask run <br>
