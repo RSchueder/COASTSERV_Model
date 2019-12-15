@@ -1,0 +1,204 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class='content-section'>
+        <form method="POST" action='' enctype = "multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class='form-group'>
+                <legend class='border-bottom mb-4'> {{ legend }}</legend>
+                    <div class='form-group'>
+                        {{ form.name.label(class='form-control-label') }}
+                    
+                        {% if form.name.errors %}
+                            {{ form.name(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.name.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.name(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>        
+                   <div class='form-group'>
+                        {{ form.tstart.label(class='form-control-label') }}
+                    
+                        {% if form.tstart.errors %}
+                            {{ form.tstart(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.tstart.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.tstart(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>
+                    <div class='form-group'>
+                        {{ form.tend.label(class='form-control-label') }}
+                        {% if form.tend.errors %}
+                            {{ form.tend(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.tend.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.tend(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>
+
+                    <div class='form-group'>
+                        {{ form.tref.label(class='form-control-label') }}
+                        {% if form.tref.errors %}
+                            {{ form.tref(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.tend.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.tref(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>
+
+                    <div class='form-group'>
+                        {{ form.xmin.label(class='form-control-label') }}
+                        {% if form.xmin.errors %}
+                            {{ form.xmin(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.xmin.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.xmin(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>
+
+                    <div class='form-group'>
+                        {{ form.xmax.label(class='form-control-label') }}
+                        {% if form.xmax.errors %}
+                            {{ form.xmax(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.xmax.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.xmax(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>
+                    <div class='form-group'>
+                        {{ form.ymin.label(class='form-control-label') }}
+                        {% if form.ymin.errors %}
+                            {{ form.ymin(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.ymin.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.ymin(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>
+    
+                    <div class='form-group'>
+                        {{ form.ymax.label(class='form-control-label') }}
+                        {% if form.ymax.errors %}
+                            {{ form.ymax(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.ymax.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.ymax(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>
+
+                    <div class='form-group'>
+                        {{ form.pli_file.label() }}
+                        {{ form.pli_file(class='form-control-file')}}
+                        {% if form.pli_file.errors %}
+                          {% for error in form.pli_file.errors %}
+                            <span class="text-danger">
+                              {{ error }}
+                            </span>
+                          {% endfor %}
+                        {% endif %}
+                    </div>      
+                    
+                    <div class='form-group'>
+                        {{ form.dataset.label(class='form-control-label') }}
+                        {% if form.dataset.errors %}
+                            {{ form.dataset(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.dataset.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.dataset(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>  
+
+                    <div class='form-group'>
+                        {{ form.username.label(class='form-control-label') }}
+                        {% if form.username.errors %}
+                            {{ form.username(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.username.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.username(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>
+    
+                    <div class='form-group'>
+                        {{ form.password.label(class='form-control-label') }}
+                        {% if form.password.errors %}
+                            {{ form.password(class='form-control form-control-lg is-invalid')  }}
+                            <div class='invalid-feedback'>
+                                {% for error in form.password.errors %}
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.password(class='form-control form-control-lg')  }}
+                        {% endif %}
+                    </div>
+                                        
+
+            </fieldset>
+            <div class='form-group'>
+                {{ form.submit(class='btn btn-outline-info') }}
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}

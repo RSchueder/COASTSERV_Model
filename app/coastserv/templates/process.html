@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class='content-section'>
+        {{ query.send_request() }}
+        {{ tide.build_tide() }}
+        {{ model.build_boundary(interp = True, simultaneous = True, steric = False) }}
+        
+        <h1>Finished!</h1>
+        <a class='btn btn-secondary btn-sm mt-1 mb-1' href= "{{ url_for('main.home') }}"> Finished, return home </a>
+    </div>
+{% endblock content %}
+

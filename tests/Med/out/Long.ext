@@ -1,0 +1,4 @@
+[boundary]
+quantity=waterlevelbnd
+locationfile=Long.pli
+forcingfile=tide_Long.bc

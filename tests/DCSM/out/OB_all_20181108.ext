@@ -1,0 +1,4 @@
+[boundary]
+quantity=waterlevelbnd
+locationfile=OB_all_20181108.pli
+forcingfile=tide_OB_all_20181108.bc

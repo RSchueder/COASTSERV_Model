@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class='content-section'>
+        <h1>COASTSERV is prepared to send your request to the CMEMS server.</h1>
+        <a class='btn btn-secondary btn-sm mt-1 mb-1' href= "{{ url_for('requests.process', name = name, time_vect = time_vect, tref = tref, dataset = dataset, coords = coords, pli_file = pli_file, credentials = credentials) }}"> Execute processing </a>
+    </div>
+{% endblock content %}
+
